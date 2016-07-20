@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanQuery">
+	<resultMap id="loaneeLoanRedordResultMap" type="LoaneeLoanRedordDto">
+			<result property="normalPay" column="NORMAL_PAY" />
+			<result property="overduePay" column="OVERDUE_PAY" />
+			<result property="totalBorrow" column="TOTAL_BORROW" />
+			<result property="stillAmount" column="STILL_AMOUNT" />
+	</resultMap>
+	
+	
+	
+     <!--根据客户编号查询融资编号 -->
+    <select id="findLoansByCustomerCode" parameterType="String" resultType="Loan">
+        SELECT 
+	        ID,
+			LOAN_CODE,
+			LOAN_TYPE,
+			LOAN_NAME,
+			PRODUCT_CODE,
+			CUSTOM_CODE,
+			CUSTOM_NAME,
+			GUARANTEE_COM_CODE,
+			LOAN_STATUS,
+			LOAN_AMOUNT,
+			LOAN_INTEREST_MANNER,
+			LOAN_INTEREST_RATES,
+			LOAN_TIME_LIMIT_DAYS,
+			LOAN_TIME_LIMIT,
+			LOAN_TIME_LIMIT_UNIT,
+			LOAN_START_SHARE,
+			LOAN_UNIT_PRICE,
+			LOAN_TOTAL_SHARE,
+			LOAN_POST_TIME,
+			LOAN_END_TIME,
+			LOAN_INTEREST,
+			LOAN_MAX_INVEST,
+			SERIAL_NUMBER,
+			PLATFORM_RATE,
+			PLATFORM_FEE,
+			PLAT_SERIAL_NUMBER,
+			GUARANTEE_RATE,
+			GUARANTEE_FEE,
+			VOUCH_SERIAL_NUMBER,
+			DEPOSIT_RATE,
+			CURRENT_INVESTED_SHARE,
+			CURRENT_SURPLUS_SHARE,
+			ACTUAL_AMOUNT,
+			LOAN_TIME,
+			CARRY_INTEREST_FROM,
+			CARRY_INTEREST_TO,
+			REPAY_TYPE,
+			RECEIVABLE_REPAY_NUMBER,
+			RECEIVABLE_NEXT_DATE,
+			RECEIVABLE_SUM,
+			RECEIVABLE_PRINCIPAL,
+			RECEIVABLE_INTEREST,
+			RECEIVABLE_DELAYING,
+			RECEIVABLE_OVERDUE,
+			RECEIVED_SUM,
+			RECEIVED_PRINCIPAL,
+			RECEIVED_INTEREST,
+			RECEIVED_DELAYING,
+			RECEIVED_OVERDUE,
+			CREATE_TIME
+        FROM 
+            LOAN
+        WHERE
+            CUSTOM_CODE = #{customCode}
+        <!-- AND 
+         	LOAN_STATUS > '10' -->
+        ORDER BY
+           CREATE_TIME DESC
+    </select>
+     <!--根据客户编号查询融资编号 -->
+    <select id="findLoanCodeByCustomerCode" parameterType="String" resultType="String">
+        SELECT 
+	        LOAN_CODE
+        FROM
+            LOAN
+        WHERE
+            CUSTOM_CODE = #{pstrCustomerCode}
+        <!-- AND 
+         	LOAN_STATUS > '10' -->
+        ORDER BY
+           LOAN_CODE DESC
+    </select>
+    
+    <!--根据融资编号前缀查询融资编号 -->
+    <select id="findLoanCodeByPre" parameterType="String" resultType="String">
+        SELECT 
+	        LOAN_CODE
+        FROM
+            LOAN
+        WHERE
+            LOAN_CODE LIKE  CONCAT(#{preLoanCode},'%') 
+        <!-- AND 
+         	LOAN_STATUS > '10' -->
+        ORDER BY
+           LOAN_CODE DESC
+    </select>
+    
+    <!--企业融资件数查询 -->
+    <select id="findLoanProjectInfo" parameterType="String" resultType="LoanProjectInfo">
+        SELECT 
+	        LOAN.ID,
+			LOAN.LOAN_CODE,
+			loan.LOAN_TYPE,
+			LOAN.LOAN_NAME,
+			LOAN.PRODUCT_CODE,
+			LOAN.CUSTOM_CODE,
+			LOAN.CUSTOM_NAME,
+			LOAN.GUARANTEE_COM_CODE,
+			LOAN.LOAN_STATUS,
+			LOAN.LOAN_AMOUNT,
+			LOAN.LOAN_INTEREST_MANNER,
+			LOAN.LOAN_INTEREST_RATES,
+			LOAN.LOAN_TIME_LIMIT_DAYS,
+			LOAN.LOAN_TIME_LIMIT,
+			LOAN.LOAN_TIME_LIMIT_UNIT,
+			LOAN.LOAN_START_SHARE,
+			LOAN.LOAN_UNIT_PRICE,
+			LOAN.LOAN_TOTAL_SHARE,
+			LOAN.LOAN_POST_TIME,
+			LOAN.LOAN_END_TIME,
+			LOAN.LOAN_INTEREST,
+			LOAN.LOAN_MAX_INVEST,
+			LOAN.SERIAL_NUMBER,
+			LOAN.PLATFORM_RATE,
+			LOAN.PLATFORM_FEE,
+			LOAN.PLAT_SERIAL_NUMBER,
+			LOAN.GUARANTEE_RATE,
+			LOAN.GUARANTEE_FEE,
+			LOAN.VOUCH_SERIAL_NUMBER,
+			LOAN.DEPOSIT_RATE,
+			LOAN.CURRENT_INVESTED_SHARE,
+			LOAN.CURRENT_SURPLUS_SHARE,
+			LOAN.ACTUAL_AMOUNT,
+			LOAN.LOAN_TIME,
+			LOAN.CARRY_INTEREST_FROM,
+			LOAN.CARRY_INTEREST_TO,
+			LOAN.REPAY_TYPE,
+			LOAN.RECEIVABLE_REPAY_NUMBER,
+			LOAN.RECEIVABLE_NEXT_DATE,
+			LOAN.RECEIVABLE_SUM,
+			LOAN.RECEIVABLE_PRINCIPAL,
+			LOAN.RECEIVABLE_INTEREST,
+			LOAN.RECEIVABLE_DELAYING,
+			LOAN.RECEIVABLE_OVERDUE,
+			LOAN.RECEIVED_SUM,
+			LOAN.RECEIVED_PRINCIPAL,
+			LOAN.RECEIVED_INTEREST,
+			LOAN.RECEIVED_DELAYING,
+			LOAN.RECEIVED_OVERDUE,
+			LOAN_INFO.LOAN_MSG,
+			LOAN_INFO.instructions,
+			LOAN_INFO.ENTRUST_JSON
+        FROM 
+            LOAN,
+            LOAN_INFO
+        WHERE
+            LOAN.LOAN_CODE = LOAN_INFO.LOAN_CODE
+        AND LOAN.LOAN_CODE = #{pstrLoanCode}
+    </select>
+    
+    <!-- 根据融资状态、当前查询条件 查询融资表件数  对应 findLoanCountByCriteria方法 -->
+    <select id="findLoanCountByCriteria" parameterType="LoanCommSelCriteria" resultType="int">
+        SELECT 
+        	COUNT(*)
+        FROM 
+        	LOAN
+        <where>
+    	<!-- 不为空则添加融资项目名称条件 -->
+    	<if test="loanParameter.loanName!=null and loanParameter.loanName!=''">
+    		AND LOAN_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.loanName}),'%')
+    	</if>
+    	<!-- 不为空则添加客户名称条件 -->
+    	<if test="loanParameter.customName!=null and loanParameter.customName!=''">
+    		AND CUSTOM_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.customName}),'%')
+    	</if>
+    	<if test="loanParameter.loanCode!=null and loanParameter.loanCode!=''">
+    		AND LOAN_CODE LIKE CONCAT(CONCAT('%',#{loanParameter.loanCode}),'%')
+    	</if>
+    	<if test="loanParameter.loginUserId!=null and loanParameter.loginUserId!=''">
+	    		AND APPLY_USER_ID = #{loanParameter.loginUserId}
+    	</if>
+    	<if test="loanParameter.ReceivableRepayStatus!=null and loanParameter.ReceivableRepayStatus!=''">
+	    		AND RECEIVABLE_REPAY_STATUS = #{loanParameter.ReceivableRepayStatus}
+    	</if>
+    	
+    	
+    	<!-- 融资状态的集合 -->
+         <if test="loanParameter.status!=null">
+          	AND LOAN_STATUS IN
+		        <foreach collection="loanParameter.status" index="index"  open="(" separator="," close=")">
+		          #{loanParameter.status[${index}]}     
+		        </foreach>   
+        	</if>
+    	</where>
+    </select>
+    
+    <!-- 根据融资客户编号查询当前融资人的融资记录信息 -->
+    <select id="findLoaneeLoanRedordDtoByCustomCode" parameterType="String" resultMap="loaneeLoanRedordResultMap">
+    SELECT
+    	COUNT(CASE WHEN LOAN_STATUS = '11' THEN 1 END ) AS NORMAL_PAY ,
+		COUNT(CASE WHEN LOAN_STATUS = '12' THEN 1 END ) AS OVERDUE_PAY,
+ 		SUM(LOAN_AMOUNT) AS TOTAL_BORROW,
+		SUM(RECEIVABLE_SUM - RECEIVED_SUM) AS STILL_AMOUNT  FROM LOAN
+    	<where>
+    		<if test="customCode!=null and customCode!=''">
+    	 	AND CUSTOM_CODE=#{customCode}
+    	 	</if>
+   	 		AND LOAN_STATUS IN ('04','07','10','11','12','13')
+    	</where>
+    </select>
+    
+    <!--真删除 对应query delete方法 -->    
+    <delete id="deleteByLoanCode" parameterType="string">
+        DELETE FROM 
+            LOAN
+        WHERE
+            LOAN_CODE = #{loanCode}
+    </delete>
+</mapper>

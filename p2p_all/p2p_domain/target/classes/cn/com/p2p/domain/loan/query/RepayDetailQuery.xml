@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.RepayDetailQuery">
+	<!-- 获取投资预告列表 对应 findInvestNoticeList方法 -->
+	<select id="findByRepayDetailRepaymentCriteria" parameterType="RepayDetailRepaymentCriteria"
+		resultType="RepayDetail">
+		SELECT
+        ID,
+        REPAY_DETAIL_CODE,
+        NUM,
+        REPAY_PLAN_DATE,
+        REPAY_REAL_DATE,
+        RECEIVED_INTEREST,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_SUM,
+        RECEIVABLE_INTEREST,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_SUM,
+        OVERDUE_DAYS,
+        PUNITIVE_DELAY_PAYMENT,
+        PUNITIVE_INTEREST,
+        STATUS,
+        ACCOUNT_NO,
+        ACCOUNT_TYPE,
+        LOAN_CODE,
+        SERIAL_NUMBER,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+		 FROM 
+		REPAY_DETAIL
+		<where>
+			<if test="criteria.loanCode!=null and criteria.loanCode!=''">
+				AND LOAN_CODE = #{criteria.loanCode}
+			</if>
+			
+			<if test="criteria.comparisonRepayPlanDate!=null and criteria.comparisonRepayPlanDate!=''">
+				AND REPAY_PLAN_DATE &lt; #{criteria.comparisonRepayPlanDate}
+				AND REPAY_REAL_DATE IS NULL
+			</if>
+			<!-- 融资状态的集合 -->
+			<if test="criteria.nums!=null">
+				AND NUM IN
+				<foreach collection="criteria.nums" index="index"
+					open="(" separator="," close=")">
+					#{criteria.nums[${index}]}
+				</foreach>
+			</if>
+			<!-- 融资状态的集合 -->
+			<if test="criteria.status!=null">
+				AND STATUS IN
+				<foreach collection="criteria.status" index="index"
+					open="(" separator="," close=")">
+					#{criteria.status[${index}]}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY LOAN_CODE ASC ,NUM ASC 
+	</select>
+</mapper>

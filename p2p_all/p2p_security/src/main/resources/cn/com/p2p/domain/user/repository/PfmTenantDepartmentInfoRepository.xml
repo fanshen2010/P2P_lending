@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.repository.PfmTenantDepartmentInfoRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        TENANT_CD,
+        DEPARTMENT_CD,
+        REGISTERED_CAPITAL,
+        CREATED_DATE,
+        COOPERATE_DATE,
+        ADDRESS,
+        INTRODUCTION,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="PfmTenantDepartmentInfo">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_TENANT_DEPARTMENT_INFO
+        WHERE
+            DEPARTMENT_CD = #{departmentCd}
+    </select>
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findPfmTenantDepartmentInfoByKeys方法 -->
+    <select id="findPfmTenantDepartmentInfoByKeys" resultType="PfmTenantDepartmentInfo">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            PFM_TENANT_DEPARTMENT_INFO
+        WHERE
+            TENANT_CD = #{tenantCd} AND DEPARTMENT_CD = #{departmentCd}
+    </select>
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="PfmTenantDepartmentInfo">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_TENANT_DEPARTMENT_INFO
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="PfmTenantDepartmentInfoCriteria" resultType="PfmTenantDepartmentInfo">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PFM_TENANT_DEPARTMENT_INFO
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="PfmTenantDepartmentInfo">
+        INSERT INTO
+            PFM_TENANT_DEPARTMENT_INFO
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{tenantCd},
+          #{departmentCd},
+          #{registeredCapital},
+          #{createdDate},
+          #{cooperateDate},
+          #{address},
+          #{introduction},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="PfmTenantDepartmentInfo">
+        UPDATE
+            PFM_TENANT_DEPARTMENT_INFO
+        <set>
+            <if test="registeredCapital != null">
+                REGISTERED_CAPITAL = #{registeredCapital},
+            </if>
+            <if test="createdDate != null">
+                CREATED_DATE = #{createdDate},
+            </if>
+            <if test="cooperateDate != null">
+                COOPERATE_DATE = #{cooperateDate},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address},
+            </if>
+            <if test="introduction != null">
+                INTRODUCTION = #{introduction},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            TENANT_CD = #{tenantCd} AND DEPARTMENT_CD = #{departmentCd}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="PfmTenantDepartmentInfo">
+        UPDATE
+            PFM_TENANT_DEPARTMENT_INFO
+        SET
+            REGISTERED_CAPITAL = #{registeredCapital},
+            CREATED_DATE = #{createdDate},
+            COOPERATE_DATE = #{cooperateDate},
+            ADDRESS = #{address},
+            INTRODUCTION = #{introduction},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            TENANT_CD = #{tenantCd} AND DEPARTMENT_CD = #{departmentCd}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" >
+        UPDATE
+            PFM_TENANT_DEPARTMENT_INFO
+        SET
+            DEL_FLAG=1
+        WHERE
+            TENANT_CD = #{tenantCd} AND DEPARTMENT_CD = #{departmentCd}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PFM_TENANT_DEPARTMENT_INFO
+        WHERE
+            TENANT_CD = #{tenantCd} AND DEPARTMENT_CD = #{departmentCd}
+    </delete>
+</mapper>

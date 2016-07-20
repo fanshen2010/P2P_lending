@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.cms.repository.ArticleRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        CATEGORY,
+        TITLE,
+        CONTENT,
+        ORDER_NUM,
+        POST_AT,
+        RECOMMEND_FLAG,
+        SEO_DESCRIPTION,
+        SEO_KEYWORDS,
+        STATUS,
+        TITLE_PIC,
+        VISITS,
+        ARTICLE_SOURCE,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="Article">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            ARTICLE
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="Article">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            ARTICLE
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="ArticleCriteria" resultType="Article">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            ARTICLE
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="Article">
+        INSERT INTO
+            ARTICLE
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{category},
+          #{title},
+          #{content},
+          #{orderNum},
+          #{postAt},
+          #{recommendFlag},
+          #{seoDescription},
+          #{seoKeywords},
+          #{status},
+          #{titlePic},
+          #{visits},
+          #{articleSource},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="Article">
+        UPDATE
+            ARTICLE
+        <set>
+            <if test="category != null">
+                CATEGORY = #{category},
+            </if>
+            <if test="title != null">
+                TITLE = #{title},
+            </if>
+            <if test="content != null">
+                CONTENT = #{content},
+            </if>
+            <if test="orderNum != null">
+                ORDER_NUM = #{orderNum},
+            </if>
+            <if test="postAt != null">
+                POST_AT = #{postAt},
+            </if>
+            <if test="recommendFlag != null">
+                RECOMMEND_FLAG = #{recommendFlag},
+            </if>
+            <if test="seoDescription != null">
+                SEO_DESCRIPTION = #{seoDescription},
+            </if>
+            <if test="seoKeywords != null">
+                SEO_KEYWORDS = #{seoKeywords},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="titlePic != null">
+                TITLE_PIC = #{titlePic},
+            </if>
+            <if test="visits != null">
+                VISITS = #{visits},
+            </if>
+            <if test="articleSource != null">
+                ARTICLE_SOURCE = #{articleSource},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="Article">
+        UPDATE
+            ARTICLE
+        SET
+            CATEGORY = #{category},
+            TITLE = #{title},
+            CONTENT = #{content},
+            ORDER_NUM = #{orderNum},
+            POST_AT = #{postAt},
+            RECOMMEND_FLAG = #{recommendFlag},
+            SEO_DESCRIPTION = #{seoDescription},
+            SEO_KEYWORDS = #{seoKeywords},
+            STATUS = #{status},
+            TITLE_PIC = #{titlePic},
+            VISITS = #{visits},
+            ARTICLE_SOURCE = #{articleSource},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            ARTICLE
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            ARTICLE
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.repository.PfmRoleMenuRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        MENU_ID,
+        ROLE_ID,
+        TENANT_CD
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="PfmRoleMenu">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_ROLE_MENU
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findPfmRoleMenuBymenuId方法 -->
+    <select id="findPfmRoleMenuByMenuId" parameterType="string" resultType="PfmRoleMenu">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            PFM_ROLE_MENU
+        WHERE
+            MENU_ID = #{menuId}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="PfmRoleMenu">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_ROLE_MENU
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="PfmRoleMenuCriteria" resultType="PfmRoleMenu">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PFM_ROLE_MENU
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="PfmRoleMenu">
+        INSERT INTO
+            PFM_ROLE_MENU
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{menuId},
+          #{roleId},
+          #{tenantCd}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="PfmRoleMenu">
+        UPDATE
+            PFM_ROLE_MENU
+        <set>
+            <if test="menuId != null">
+                MENU_ID = #{menuId},
+            </if>
+            <if test="roleId != null">
+                ROLE_ID = #{roleId},
+            </if>
+            <if test="tenantCd != null">
+                TENANT_CD = #{tenantCd}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="PfmRoleMenu">
+        UPDATE
+            PFM_ROLE_MENU
+        SET
+            MENU_ID = #{menuId},
+            ROLE_ID = #{roleId},
+            TENANT_CD = #{tenantCd}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            PFM_ROLE_MENU
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PFM_ROLE_MENU
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

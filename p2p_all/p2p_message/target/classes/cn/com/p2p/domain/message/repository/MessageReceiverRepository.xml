@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.message.repository.MessageReceiverRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        RECEIVER_ID,
+        RECEIVER_NAME,
+        RECEIVER_PHONE,
+        MSG_TYPE,
+        MSG_RECEIVE_TYPE,
+        MSG_ID,
+        TENANT_CD
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="MessageReceiver">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            MESSAGE_RECEIVER
+        WHERE
+            ID = #{id}
+    </select>
+ 
+    <!--按业务键进行查询，返回集合记录 对应repository findMessageReceiverByBizKeys方法 -->
+    <select id="findMessageReceiverByBizKeys" resultType="MessageReceiver">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            MESSAGE_RECEIVER
+        WHERE
+            MSG_ID = #{msgId} AND TENANT_CD = #{tenantCd}
+    </select>
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="MessageReceiver">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            MESSAGE_RECEIVER
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="MessageReceiverCriteria" resultType="MessageReceiver">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            MESSAGE_RECEIVER
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="MessageReceiver">
+        INSERT INTO
+            MESSAGE_RECEIVER
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{receiverId},
+          #{receiverName},
+          #{receiverPhone},
+          #{msgType},
+          #{msgReceiveType},
+          #{msgId},
+          #{tenantCd}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="MessageReceiver">
+        UPDATE
+            MESSAGE_RECEIVER
+        <set>
+            <if test="receiverId != null">
+                RECEIVER_ID = #{receiverId},
+            </if>
+            <if test="receiverName != null">
+                RECEIVER_NAME = #{receiverName},
+            </if>
+            <if test="receiverPhone != null">
+                RECEIVER_PHONE = #{receiverPhone},
+            </if>
+            <if test="msgType != null">
+                MSG_TYPE = #{msgType},
+            </if>
+            <if test="msgReceiveType != null">
+                MSG_RECEIVE_TYPE = #{msgReceiveType},
+            </if>
+            <if test="msgId != null">
+                MSG_ID = #{msgId},
+            </if>
+            <if test="tenantCd != null">
+                TENANT_CD = #{tenantCd}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="MessageReceiver">
+        UPDATE
+            MESSAGE_RECEIVER
+        SET
+            RECEIVER_ID = #{receiverId},
+            RECEIVER_NAME = #{receiverName},
+            RECEIVER_PHONE = #{receiverPhone},
+            MSG_TYPE = #{msgType},
+            MSG_RECEIVE_TYPE = #{msgReceiveType},
+            MSG_ID = #{msgId},
+            TENANT_CD = #{tenantCd}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            MESSAGE_RECEIVER
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            MESSAGE_RECEIVER
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

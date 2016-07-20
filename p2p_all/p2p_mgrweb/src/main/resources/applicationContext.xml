@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <context:property-placeholder location="${dbconfig}/fero-db-${profiles.active}.properties,classpath:spring_secutity.properties" />
+    <bean class="cn.com.p2p.framework.context.SpringBeanContext" lazy-init="false" />
+    <import resource="classpath:/spring/fero-context.xml" />
+	<bean id="settings"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:setting-${profiles.active}.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="logConfig" class="cn.com.p2p.framework.log.LogConfig">
+	  <property name="logfullpath" value="${logconfig}"/>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" /> 
+   <!-- 自动加载构建bean -->  
+    <context:component-scan base-package="cn.com.p2p.framework.web.*"/>
+    <context:component-scan base-package="cn.com.p2p.framework.web.*.*"/>
+    <context:component-scan base-package="cn.com.p2p.*.service"/> 
+    <context:component-scan base-package="cn.com.p2p.*.*.service"/>
+    <context:component-scan base-package="cn.com.p2p.message.internal.send"/>
+    <context:component-scan base-package="cn.com.p2p.validator"/>
+
+    <!-- AOP 异常拦截 -->
+<!--     <context:component-scan base-package="cn.com.p2p.control.exception"/> -->
+    <bean class="cn.com.p2p.control.exception.DBExceptionAspect"/> 
+    <bean class="cn.com.p2p.control.exception.SysExceptionAspect"/> 
+    <!-- AOP log -->
+<!--     <context:component-scan base-package="cn.com.p2p.control.log"/> -->
+    <bean class="cn.com.p2p.control.log.ApplicationLogAspect"/> 
+    <!-- AOP 加载-->
+    <aop:aspectj-autoproxy/>
+    <bean id="fm_menu_list" class="cn.com.p2p.ui.control.LeftMenuControl" />
+    <bean id="money_format" class="cn.com.p2p.ui.control.NumberFormat" />
+    <bean id="approveType" class="cn.com.p2p.ui.control.ApproveTypeControl" />
+    
+    <bean id="getCodeName" class="cn.com.p2p.framework.web.ui.GetCodeNameControl"/>
+    <bean id="getEnum" class="cn.com.p2p.framework.web.ui.GetEnumControl"/>
+    <bean id="getLoanStatusName" class="cn.com.p2p.ui.control.GetLoanStatusControl"/>
+	<bean id="sysSettingValue" class="cn.com.p2p.ui.control.HeaderContentControl"/>
+	<!-- 加载所有省份信息 -->
+	<bean id="dropdownList" class="cn.com.p2p.framework.web.ui.DropdownListControl"/>
+	<bean id="radioButtonList" class="cn.com.p2p.framework.web.ui.RadioButtonListControl"/>
+	<bean id="checkBoxList" class="cn.com.p2p.framework.web.ui.CheckBoxListControl"/>
+	<bean id="stringFormat" class="cn.com.p2p.ui.control.StringFormat"/>
+	<bean id="getSettingValue" class="cn.com.p2p.ui.service.GetSettingMethod"/>
+	<!-- 获取消息条数 -->
+	<bean id="getMessage" class="cn.com.p2p.ui.control.GetMessageControl"/>
+	 <bean id="freemarkerConfigurer"
+		class="cn.com.p2p.framework.web.freemarker.MyFreeMarkerConfigurer">
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="classic_compatible">true</prop>
+				<prop key="defaultEncoding">UTF-8</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="boolean_format">true,false</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="time_format">HH:mm:ss</prop>
+				<prop key="number_format">0.######</prop>
+				<prop key="whitespace_stripping">true</prop>
+				 <prop key="auto_import">
+				    /WEB-INF/view/common/layout/taglibs.ftl as taglibs,
+					/WEB-INF/view/common/layout/common_layout.ftl as cl,
+					/WEB-INF/view/common/htmlTag.ftl as h,
+					/WEB-INF/view/common/control/control.ftl as ctl,
+					/WEB-INF/view/common/bizTag/bizTag.ftl as bizTag
+				</prop> 
+			</props>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="fm_menu_list" value-ref="fm_menu_list" />
+				<entry key="money_format" value-ref="money_format" />
+				<entry key="sysSettingValue" value-ref="sysSettingValue" />
+				<entry key="getCodeName" value-ref="getCodeName" />
+				<entry key="getLoanStatusName" value-ref="getLoanStatusName" />
+				<entry key="dropdownList" value-ref="dropdownList" />
+				<entry key="radioButtonList" value-ref="radioButtonList" />
+				<entry key="checkBoxList" value-ref="checkBoxList" />
+				<entry key="getEnum" value-ref="getEnum" />
+				<entry key="stringFormat" value-ref="stringFormat" />
+				<entry key="getSettingValue" value-ref="getSettingValue" />
+				<entry key="getMessage" value-ref="getMessage" />
+				<entry key="approveType" value-ref="approveType" />
+			</map>
+		</property>
+	</bean>
+	<bean id="springContextsUtil" class="cn.com.p2p.framework.util.SpringContextUtils" ></bean>
+    <bean class="cn.com.p2p.framework.web.event.SpringInitBeanPostProcessor" /> 
+</beans> 

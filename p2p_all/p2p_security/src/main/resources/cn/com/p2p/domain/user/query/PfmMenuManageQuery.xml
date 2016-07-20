@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.query.PfmMenuManageQuery">
+	<!-- 根据父级菜单ID查找菜单信息-->
+    <select id="findPfmMenuByParentId" parameterType="String" resultType="PfmMenu">
+        SELECT
+            MENU_ID,
+	        MENU_LEVEL,
+	        MENU_PARENT_ID,
+	        MENU_NAME,
+	        ORDER_NUM,
+	        MENU_ICON,
+	        MENU_URL,
+	        MENU_TARGET,
+	        MENU_CLASS,
+	        STATUS,
+	        CREATE_TIME,
+	        UPDATE_TIME,
+	        CREATE_USER_ID,
+	        UPDATE_USER_ID,
+	        VERSION
+		FROM 
+			PFM_MENU
+		<where>
+			<if test="menuParentId==null">
+	     		 AND MENU_PARENT_ID IS NULL
+	     	</if>
+	     	<if test="menuParentId!=null">
+	     		 AND MENU_PARENT_ID = #{menuParentId}
+	     	</if>
+     	</where>
+     	ORDER BY
+           ORDER_NUM ASC
+    </select>  
+     
+</mapper>

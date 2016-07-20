@@ -1,0 +1,46 @@
+@charset "utf-8";
+/**
+ * MTA 新全局样式
+ * 本文件最终会被合并，文件增减请修改TACS上项目合并配置
+ * @author	bingzitang(唐斌)
+ */
+
+
+/*
+【z-index 规范】
+z-index 分为四个等级，每个等级子范围为10。
+
+1～9 内容布局层（模块私有的小部件，相对定位与绝对定位结合的布局）
+10～19 常驻浮层 （如固定头部的导航、回到顶部的按钮）
+20～29 弹出浮层 （如气泡tips、对话框、弹出菜单）
+30～39 特殊浮层 
+
+常见值：
+
+.ui_mask 6
+.mod_basic > .content .sub_title 7
+.mod_header 19
+#footer .gotop 19
+.ui_datalist 20
+.ui_menu 20
+.ui_menu.show 21
+.ui_bubble 21
+.ui_dialog_mask 23
+.ui_dialog 24
+
+特殊值：
+
+#header 20 (需要让下拉菜单盖住.mod_header)
+
+*/
+
+/** Reset */
+@import url("./reset.css");
+/** 旧版本的全局样式(过渡方案，将逐步删除) */
+@import url("./old_ui.css");
+/** 基础交互控件 */
+@import url("./ui.css");
+/** 布局框架 */
+@import url("./layout.css");
+/** 公用内容模块 */
+@import url("./module.css");

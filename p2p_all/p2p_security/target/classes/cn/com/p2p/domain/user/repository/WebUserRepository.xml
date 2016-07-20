@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.repository.WebUserRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        LOGIN,
+        CELPHONE,
+        EMAIL,
+        IDENTITY,
+        PASSWORD,
+        PASSWORD_SALT,
+        CURRENT_LOGIN_AT,
+        CURRENT_LOGIN_IP,
+        FAILED_LOGIN_COUNT,
+        LAST_LOGIN_AT,
+        LAST_LOGIN_IP,
+        LOGIN_COUNT,
+        USER_TYPE,
+        CICC_ACCOUNT_ID,
+        CICC_DEBITACCOUNT_ID,
+        REGIST_IP,
+        ACTIVE,
+        VALID_FLAG,
+        CREATE_TIME,
+        UPDATE_TIME
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="WebUser">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            WEB_USER
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findWebUserByemail方法 -->
+    <select id="findWebUserByEmail" parameterType="string" resultType="WebUser">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            WEB_USER
+        WHERE
+            EMAIL = #{email}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="WebUser">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            WEB_USER
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="WebUserCriteria" resultType="WebUser">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            WEB_USER
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="WebUser">
+        INSERT INTO
+            WEB_USER
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{login},
+          #{celphone},
+          #{email},
+          #{identity},
+          #{password},
+          #{passwordSalt},
+          #{currentLoginAt},
+          #{currentLoginIp},
+          #{failedLoginCount},
+          #{lastLoginAt},
+          #{lastLoginIp},
+          #{loginCount},
+          #{userType},
+          #{ciccAccountId},
+          #{ciccDebitaccountId},
+          #{registIp},
+          #{active},
+          #{validFlag},
+          #{createTime},
+          #{updateTime}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="WebUser">
+        UPDATE
+            WEB_USER
+        <set>
+            <if test="login != null">
+                LOGIN = #{login},
+            </if>
+            <if test="celphone != null">
+                CELPHONE = #{celphone},
+            </if>
+            <if test="email != null">
+                EMAIL = #{email},
+            </if>
+            <if test="identity != null">
+                IDENTITY = #{identity},
+            </if>
+            <if test="password != null">
+                PASSWORD = #{password},
+            </if>
+            <if test="passwordSalt != null">
+                PASSWORD_SALT = #{passwordSalt},
+            </if>
+            <if test="currentLoginAt != null">
+                CURRENT_LOGIN_AT = #{currentLoginAt},
+            </if>
+            <if test="currentLoginIp != null">
+                CURRENT_LOGIN_IP = #{currentLoginIp},
+            </if>
+            <if test="failedLoginCount != null">
+                FAILED_LOGIN_COUNT = #{failedLoginCount},
+            </if>
+            <if test="lastLoginAt != null">
+                LAST_LOGIN_AT = #{lastLoginAt},
+            </if>
+            <if test="lastLoginIp != null">
+                LAST_LOGIN_IP = #{lastLoginIp},
+            </if>
+            <if test="loginCount != null">
+                LOGIN_COUNT = #{loginCount},
+            </if>
+            <if test="userType != null">
+                USER_TYPE = #{userType},
+            </if>
+            <if test="ciccAccountId != null">
+                CICC_ACCOUNT_ID = #{ciccAccountId},
+            </if>
+            <if test="ciccDebitaccountId != null">
+                CICC_DEBITACCOUNT_ID = #{ciccDebitaccountId},
+            </if>
+            <if test="registIp != null">
+                REGIST_IP = #{registIp},
+            </if>
+            <if test="active != null">
+                ACTIVE = #{active},
+            </if>
+            <if test="validFlag != null">
+                VALID_FLAG = #{validFlag},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="WebUser">
+        UPDATE
+            WEB_USER
+        SET
+            LOGIN = #{login},
+            CELPHONE = #{celphone},
+            EMAIL = #{email},
+            IDENTITY = #{identity},
+            PASSWORD = #{password},
+            PASSWORD_SALT = #{passwordSalt},
+            CURRENT_LOGIN_AT = #{currentLoginAt},
+            CURRENT_LOGIN_IP = #{currentLoginIp},
+            FAILED_LOGIN_COUNT = #{failedLoginCount},
+            LAST_LOGIN_AT = #{lastLoginAt},
+            LAST_LOGIN_IP = #{lastLoginIp},
+            LOGIN_COUNT = #{loginCount},
+            USER_TYPE = #{userType},
+            CICC_ACCOUNT_ID = #{ciccAccountId},
+            CICC_DEBITACCOUNT_ID = #{ciccDebitaccountId},
+            REGIST_IP = #{registIp},
+            ACTIVE = #{active},
+            VALID_FLAG = #{validFlag},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            WEB_USER
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            WEB_USER
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

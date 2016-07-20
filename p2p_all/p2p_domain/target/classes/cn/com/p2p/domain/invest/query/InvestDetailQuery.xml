@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.invest.query.InvestDetailQuery">
+
+   <resultMap id="InvestDetailResultMap" type="InvestDetailDto">
+	        <result property="collectPayment" column="COLLECT_PAYMENT" />
+	        <result property="recievedPayment" column="RECIEVED_PAYMENT" />
+	        <result property="penalty" column="PENALTY" />
+	        <result property="recievePlanDate" column="PLAN_DATE" />
+	</resultMap>
+
+	<select id="findInvestByInvestYear"  resultMap="InvestDetailResultMap">
+       SELECT 
+			SUM(RECEIVABLE_SUM-RECIEVED_SUM) AS 'COLLECT_PAYMENT',
+			SUM(RECIEVED_SUM) AS 'RECIEVED_PAYMENT',
+			SUM(PUNITIVE_INTEREST) AS 'PENALTY',
+			RECIEVE_PLAN_DATE AS 'PLAN_DATE'
+		FROM 
+			INVEST_DETAIL 
+		<where>
+			<if test="investYear!=null and investYear!=''">
+	    		 AND YEAR(RECIEVE_PLAN_DATE) = #{investYear}
+	    	</if>
+	    	<if test="userId!=null and userId!=''">
+    		 	AND USER_ID = #{userId}
+    		</if>
+		</where>
+		GROUP BY 
+			MONTH(RECIEVE_PLAN_DATE) 
+		ORDER BY 
+			RECIEVE_PLAN_DATE ASC
+    </select>
+    
+    <select id="findInvestDetailByYearMonth"  resultType="InvestDetail">
+       SELECT 
+	       RECIEVE_PLAN_DATE,
+	       RECIEVE_REAL_DATE,
+	       RECIEVED_SUM,
+	       RECEIVABLE_PRINCIPAL,
+	       RECEIVABLE_INTEREST,
+	       PUNITIVE_INTEREST,
+	       RECEIVABLE_SUM,
+	       LOAN_CODE,
+	       LOAN_NAME,
+	       STATUS
+       FROM 
+       		INVEST_DETAIL 
+      	<where>
+    	
+    	<if test="investYear!=null and investYear!=''">
+    		 AND YEAR(RECIEVE_PLAN_DATE) = #{investYear}
+    	</if>
+    	<if test="investMonth!=null and investMonth!=''">
+    		 AND MONTH(RECIEVE_PLAN_DATE) = #{investMonth}
+    	</if>
+    	<if test="userId!=null and userId!=''">
+    		 AND USER_ID = #{userId}
+    	</if>
+       </where>
+        ORDER BY 
+        	RECIEVE_PLAN_DATE ASC
+    </select>
+    
+    
+    <select id="findInvestDetailYearByUserId" parameterType="string" resultType="string">
+       	SELECT  
+       		YEAR(RECIEVE_PLAN_DATE)
+       	FROM 
+       		INVEST_DETAIL 
+   		WHERE 
+    		USER_ID= #{userId}
+   		GROUP BY 
+   			YEAR(RECIEVE_PLAN_DATE) 
+   		ORDER BY 
+   			RECIEVE_PLAN_DATE DESC
+    </select>
+    
+    <select id="findPageInvestDetailByCriteria" parameterType="InvestDetailCriteria" resultType="InvestDetail">
+       	SELECT  
+       		ID,
+			INVEST_DETAIL_CODE,
+			NUM,
+			RECIEVE_PLAN_DATE,
+			RECIEVE_REAL_DATE,
+			RECEIVED_PRINCIPAL,
+			RECEIVED_INTEREST,
+			RECIEVED_SUM,
+			RECEIVABLE_PRINCIPAL,
+			RECEIVABLE_INTEREST,
+			RECEIVABLE_SUM,
+			PUNITIVE_DAY,
+			PUNITIVE_INTEREST,
+			STATUS,
+			INVEST_CODE,
+			LOAN_CODE,
+			SERIAL_NUMBER,
+			TENANT_ID,
+			CREATE_TIME,
+			UPDATE_TIME,
+			CREATE_USER_ID,
+			UPDATE_USER_ID,
+			VERSION
+         FROM                  
+            INVEST_DETAIL 
+   		<where> 
+   			<if test="criteria.investCode!=null and criteria.investCode!=''">
+   				INVEST_CODE = #{criteria.investCode}
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="findInvestDetailsByYear" resultType="InvestDetail">
+       	SELECT
+			RECIEVE_PLAN_DATE,
+			RECIEVE_REAL_DATE,
+			RECIEVED_SUM,
+			RECEIVABLE_SUM,
+			PUNITIVE_INTEREST,
+			STATUS,
+			LOAN_CODE,
+			LOAN_NAME
+         FROM                  
+            INVEST_DETAIL 
+   		<where>
+			<if test="investYear!=null and investYear!=''">
+	    		 AND YEAR(RECIEVE_PLAN_DATE) = #{investYear}
+	    	</if>
+	    	<if test="userId!=null and userId!=''">
+    		 	AND USER_ID = #{userId}
+    		</if>
+		</where>
+		ORDER BY 
+			RECIEVE_PLAN_DATE ASC
+    </select>
+    
+    <select id="findInvestDetailListByCriteria" parameterType="InvestDetailCriteria" resultType="CustomInvestDetail"> 
+    	select 
+    	 D.ID,
+        D.INVEST_DETAIL_CODE,
+        D.NUM,
+        D.RECIEVE_PLAN_DATE,
+        D.RECIEVE_REAL_DATE,
+        D.RECEIVED_PRINCIPAL,
+        D.RECEIVED_INTEREST,
+        D.RECIEVED_SUM,
+        D.RECEIVABLE_PRINCIPAL,
+        D.RECEIVABLE_INTEREST,
+        D.RECEIVABLE_SUM,
+        D.PUNITIVE_DAY,
+        D.PUNITIVE_INTEREST,
+        D.STATUS,
+        D.INVEST_CODE,
+        D.LOAN_CODE,
+        D.LOAN_NAME,
+        D.SERIAL_NUMBER,
+        D.TENANT_ID,
+        D.USER_ID,
+        D.CREATE_TIME,
+        D.UPDATE_TIME,
+        D.CREATE_USER_ID,
+        D.UPDATE_USER_ID,
+        D.VERSION,
+        I.INVEST_USER_NAME
+        FROM INVEST_DETAIL D,INVEST I
+        <where>
+        	AND  D.INVEST_CODE=I.INVEST_CODE
+        	<if test="criteria.status != null">
+    			AND D.STATUS = #{criteria.status}
+    		</if>
+        	<if test="criteria.num != null">
+    			AND D.NUM = #{criteria.num}
+    		</if>
+        	<if test="criteria.investCode != null">
+    			AND D.INVEST_CODE = #{criteria.investCode}
+    		</if>
+        	<if test="criteria.loanCode != null">
+    			AND D.LOAN_CODE = #{criteria.loanCode}
+    		</if>
+        	<if test="criteria.loanName != null">
+    			AND D.LOAN_NAME = #{criteria.loanName}
+    		</if>
+        	<if test="criteria.investCode != null">
+    			AND D.INVEST_CODE = #{criteria.investCode}
+    		</if>
+        </where>
+    	ORDER BY  D.NUM ASC
+    </select>
+</mapper>

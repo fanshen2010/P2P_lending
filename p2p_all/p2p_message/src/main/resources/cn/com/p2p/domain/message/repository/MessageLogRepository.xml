@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.message.repository.MessageLogRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        SEND_TIME,
+        MSG_TYPE,
+        SUBJECT,
+        CONTENT,
+        TO_USER_ID,
+        STATUS,
+        MSG_RECEIVE_TYPE,
+        TENANT_CD,
+        CREATE_USER_ID,
+        CREATED_AT
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="MessageLog">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            MESSAGE_LOG
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="MessageLog">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            MESSAGE_LOG
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="MessageLogCriteria" resultType="MessageLog">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            MESSAGE_LOG
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="MessageLog">
+        INSERT INTO
+            MESSAGE_LOG
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{sendTime},
+          #{msgType},
+          #{subject},
+          #{content},
+          #{toUserId},
+          #{status},
+          #{msgReceiveType},
+          #{tenantCd},
+          #{createUserId},
+          #{createdAt}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="MessageLog">
+        UPDATE
+            MESSAGE_LOG
+        <set>
+            <if test="sendTime != null">
+                SEND_TIME = #{sendTime},
+            </if>
+            <if test="msgType != null">
+                MSG_TYPE = #{msgType},
+            </if>
+            <if test="subject != null">
+                SUBJECT = #{subject},
+            </if>
+            <if test="content != null">
+                CONTENT = #{content},
+            </if>
+            <if test="toUserId != null">
+                TO_USER_ID = #{toUserId},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="msgReceiveType != null">
+                MSG_RECEIVE_TYPE = #{msgReceiveType},
+            </if>
+            <if test="tenantCd != null">
+                TENANT_CD = #{tenantCd},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="createdAt != null">
+                CREATED_AT = #{createdAt}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="MessageLog">
+        UPDATE
+            MESSAGE_LOG
+        SET
+            SEND_TIME = #{sendTime},
+            MSG_TYPE = #{msgType},
+            SUBJECT = #{subject},
+            CONTENT = #{content},
+            TO_USER_ID = #{toUserId},
+            STATUS = #{status},
+            MSG_RECEIVE_TYPE = #{msgReceiveType},
+            TENANT_CD = #{tenantCd},
+            CREATE_USER_ID = #{createUserId},
+            CREATED_AT = #{createdAt}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            MESSAGE_LOG
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            MESSAGE_LOG
+        WHERE
+            ID = #{id}
+    </delete>
+    
+    
+        <!--按业务键进行查询，返回集合记录 对应repository findMessageLogByBizKeys方法 -->
+    <select id="findMessageLogByBizKeys" resultType="MessageLog">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            MESSAGE_LOG
+        WHERE
+            MSG_TYPE = #{msgType} AND TENANT_CD = #{tenantCd}
+    </select>
+
+    <!--按业务键进行查询，返回集合记录 对应repository findMessageLogByBizKeys方法 -->
+    <select id="findMessageLogByUser" resultType="MessageLog">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            MESSAGE_LOG
+        WHERE
+            MSG_TYPE = #{msgType} AND TO_USER_ID = #{userId} AND TENANT_CD = #{tenantCd}
+    </select> 
+    
+    
+</mapper>

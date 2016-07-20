@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.invest.repository.InvestDetailRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        INVEST_DETAIL_CODE,
+        NUM,
+        RECIEVE_PLAN_DATE,
+        RECIEVE_REAL_DATE,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_INTEREST,
+        RECIEVED_SUM,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_INTEREST,
+        RECEIVABLE_SUM,
+        PUNITIVE_DAY,
+        PUNITIVE_INTEREST,
+        STATUS,
+        INVEST_CODE,
+        LOAN_CODE,
+        LOAN_NAME,
+        SERIAL_NUMBER,
+        TENANT_ID,
+        USER_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="InvestDetail">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            INVEST_DETAIL
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findInvestDetailByinvestDetailCode方法 -->
+    <select id="findInvestDetailByInvestDetailCode" parameterType="string" resultType="InvestDetail">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            INVEST_DETAIL
+        WHERE
+            INVEST_DETAIL_CODE = #{investDetailCode}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="InvestDetail">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            INVEST_DETAIL
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="InvestDetailCriteria" resultType="InvestDetail">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            INVEST_DETAIL
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="InvestDetail">
+        INSERT INTO
+            INVEST_DETAIL
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{investDetailCode},
+          #{num},
+          #{recievePlanDate},
+          #{recieveRealDate},
+          #{receivedPrincipal},
+          #{receivedInterest},
+          #{recievedSum},
+          #{receivablePrincipal},
+          #{receivableInterest},
+          #{receivableSum},
+          #{punitiveDay},
+          #{punitiveInterest},
+          #{status},
+          #{investCode},
+          #{loanCode},
+          #{loanName},
+          #{serialNumber},
+          #{tenantId},
+          #{userId},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="InvestDetail">
+        UPDATE
+            INVEST_DETAIL
+        <set>
+            <if test="investDetailCode != null">
+                INVEST_DETAIL_CODE = #{investDetailCode},
+            </if>
+            <if test="num != null">
+                NUM = #{num},
+            </if>
+            <if test="recievePlanDate != null">
+                RECIEVE_PLAN_DATE = #{recievePlanDate},
+            </if>
+            <if test="recieveRealDate != null">
+                RECIEVE_REAL_DATE = #{recieveRealDate},
+            </if>
+            <if test="receivedPrincipal != null">
+                RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            </if>
+            <if test="receivedInterest != null">
+                RECEIVED_INTEREST = #{receivedInterest},
+            </if>
+            <if test="recievedSum != null">
+                RECIEVED_SUM = #{recievedSum},
+            </if>
+            <if test="receivablePrincipal != null">
+                RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            </if>
+            <if test="receivableInterest != null">
+                RECEIVABLE_INTEREST = #{receivableInterest},
+            </if>
+            <if test="receivableSum != null">
+                RECEIVABLE_SUM = #{receivableSum},
+            </if>
+            <if test="punitiveDay != null">
+                PUNITIVE_DAY = #{punitiveDay},
+            </if>
+            <if test="punitiveInterest != null">
+                PUNITIVE_INTEREST = #{punitiveInterest},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="investCode != null">
+                INVEST_CODE = #{investCode},
+            </if>
+            <if test="loanCode != null">
+                LOAN_CODE = #{loanCode},
+            </if>
+            <if test="loanName != null">
+                LOAN_NAME = #{loanName},
+            </if>
+            <if test="serialNumber != null">
+                SERIAL_NUMBER = #{serialNumber},
+            </if>
+            <if test="tenantId != null">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="userId != null">
+                USER_ID = #{userId},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="InvestDetail">
+        UPDATE
+            INVEST_DETAIL
+        SET
+            INVEST_DETAIL_CODE = #{investDetailCode},
+            NUM = #{num},
+            RECIEVE_PLAN_DATE = #{recievePlanDate},
+            RECIEVE_REAL_DATE = #{recieveRealDate},
+            RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            RECEIVED_INTEREST = #{receivedInterest},
+            RECIEVED_SUM = #{recievedSum},
+            RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            RECEIVABLE_INTEREST = #{receivableInterest},
+            RECEIVABLE_SUM = #{receivableSum},
+            PUNITIVE_DAY = #{punitiveDay},
+            PUNITIVE_INTEREST = #{punitiveInterest},
+            STATUS = #{status},
+            INVEST_CODE = #{investCode},
+            LOAN_CODE = #{loanCode},
+            LOAN_NAME = #{loanName},
+            SERIAL_NUMBER = #{serialNumber},
+            TENANT_ID = #{tenantId},
+            USER_ID = #{userId},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            INVEST_DETAIL
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            INVEST_DETAIL
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

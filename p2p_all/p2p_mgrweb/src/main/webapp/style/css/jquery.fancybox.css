@@ -1,0 +1,310 @@
+/*! fancyBox v2.1.5 fancyapps.com | fancyapps.com/fancybox/#license */
+.fancybox-wrap,
+.fancybox-skin,
+.fancybox-outer,
+.fancybox-inner,
+.fancybox-image,
+.fancybox-wrap iframe,
+.fancybox-wrap object,
+.fancybox-nav,
+.fancybox-nav span,
+.fancybox-tmp
+{
+	padding: 0;
+	margin: 0;
+	border: 0;
+	outline: none;
+	vertical-align: top;
+}
+
+.fancybox-wrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 8020;
+}
+.fancybox-skin {
+	position: relative;
+	background: #f9f9f9;
+	color: #444;
+	text-shadow: none;
+	/*-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;*/
+}
+
+.fancybox-opened {
+	z-index: 8030;
+}
+
+.fancybox-opened .fancybox-skin {
+	-webkit-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+	   -moz-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+	        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+			border-radius:3px;
+}
+
+.fancybox-outer, .fancybox-inner {
+	position: relative;  z-index: 9100;
+}
+
+.fancybox-inner {
+	/* overflow: hidden;*/
+	overflow: inherit !important; /* fancybox 验证出错,顶部盖住验证信息，暂时解决办法 */
+}
+.fancybox-inner.overflow-auto {
+	overflow-y:auto !important; /* fancybox  不是验证情况下让内容出现滚动条  */
+	overflow-x:hidden !important;;
+}
+
+.fancybox-type-iframe .fancybox-inner {
+	-webkit-overflow-scrolling: touch;
+}
+
+.fancybox-error {
+	color: #444;
+	font: 14px/20px "Helvetica Neue",Helvetica,Arial,sans-serif;
+	margin: 0;
+	padding: 15px;
+	white-space: nowrap;
+}
+
+.fancybox-image, .fancybox-iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.fancybox-image {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+#fancybox-loading, .fancybox-prev span, .fancybox-next span {
+	background-image: url('../images/icon/common/fancybox_sprite.png');
+}
+#fancybox-loading {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -22px;
+	margin-left: -22px;
+	background-position: 0 -108px;
+	opacity: 0.8;
+	cursor: pointer;
+	z-index: 8060;
+}
+
+#fancybox-loading div {
+	width: 44px;
+	height: 44px;
+	background: url('../images/icon/common/fancybox_loading.gif') center center no-repeat;
+}
+
+.fancybox-close {
+	position: absolute;
+	top: 11px;
+	right: 20px;
+	width: 20px;
+	height: 20px;
+	background-image: url(../images/icon/icon_common.png);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	z-index: 8140;
+}
+.fancybox-close:hover{-webkit-transform:rotate(360deg); -webkit-transform-origin:center center; -webkit-transition:all .5s ease-out;transform:rotate(360deg); transform-origin:center center; transition:all .5s ease-out;}
+.fancybox-nav {
+	position: absolute;
+	top: 0;
+	width: 40%;
+	height: 100%;
+	cursor: pointer;
+	text-decoration: none;
+	background: transparent url('../images/icon/common/blank.gif'); /* helps IE */
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	z-index: 8040;
+}
+
+.fancybox-prev {
+	left: 0;
+}
+
+.fancybox-next {
+	right: 0;
+}
+
+.fancybox-nav span {
+	position: absolute;
+	top: 50%;
+	width: 36px;
+	height: 34px;
+	margin-top: -18px;
+	cursor: pointer;
+	z-index: 8040;
+	visibility: hidden;
+}
+
+.fancybox-prev span {
+	left: 10px;
+	background-position: 0 -36px;
+}
+
+.fancybox-next span {
+	right: 10px;
+	background-position: 0 -72px;
+}
+
+.fancybox-nav:hover span {
+	visibility: visible;
+}
+
+.fancybox-tmp {
+	position: absolute;
+	top: -99999px;
+	left: -99999px;
+	visibility: hidden;
+	max-width: 99999px;
+	max-height: 99999px;
+	overflow: visible !important;
+}
+
+/* Overlay helper */
+
+.fancybox-lock {
+    overflow: hidden !important;
+    width: auto;
+}
+
+.fancybox-lock body {
+    overflow: hidden !important;
+}
+
+.fancybox-lock-test {
+    overflow-y: hidden !important;
+}
+
+.fancybox-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	display: none;
+	z-index: 8010;
+	background: url('../images/icon/common/fancybox_overlay.png');
+}
+
+.fancybox-overlay-fixed {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+}
+
+.fancybox-lock .fancybox-overlay {
+	overflow: auto;
+	overflow-y: scroll;
+}
+
+/* Title helper */
+
+.fancybox-title {
+	visibility: hidden;
+	font: normal 13px/20px ,Microsoft YaHei,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	position: relative;
+	text-shadow: none;
+	z-index: 8050;
+	white-space: nowrap;
+}
+
+.fancybox-opened .fancybox-title {
+	visibility: visible;
+}
+
+.fancybox-title-float-wrap {
+	position: absolute;
+	bottom: 0;
+	right: 50%;
+	margin-bottom: -35px;
+	z-index: 8050;
+	text-align: center;
+}
+
+.fancybox-title-float-wrap .child {
+	display: inline-block;
+	margin-right: -100%;
+	padding: 2px 20px;
+	background: transparent; /* Fallback for web browsers that doesn't support RGBa */
+	background: rgba(0, 0, 0, 0.8);
+	-webkit-border-radius: 15px;
+	   -moz-border-radius: 15px;
+	        border-radius: 15px;
+	text-shadow: 0 1px 2px #222;
+	color: #FFF;
+	font-weight: bold;
+	line-height: 24px;
+	white-space: nowrap;
+}
+
+.fancybox-title-outside-wrap {
+	position: relative;
+	padding: 0 15px;
+	line-height: 42px;
+	height: 42px;
+	 background-color:#f4f5f9;
+	color: #222;
+	font-size: 1.17em;
+}
+
+.fancybox-title-inside-wrap {
+	line-height: 42px;
+	height: 42px;
+	background-color: #f4f5f9;
+	color: #222;
+	font-size: 1.17em;
+	padding: 0 15px;
+	margin: -15px -15px 20px -15px;
+	border-radius:3px;
+}
+
+.fancybox-title-over-wrap {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	color: #fff;
+	padding: 10px;
+	background: #000;
+	background: rgba(0, 0, 0, .8);
+}
+.fancybox_pop{ display:none;}
+.fancybox_pop .frm_label, .fancybox_pop .frm_controls, .fancybox_pop .form_wrp .table td { background-color:#fff; }
+.fancybox_pop .search_form,.fancybox_pop .search_form .frm_controls{ background-color:transparent}
+
+.fancybox_confirm{ padding:30px 40px;}
+.fancybox_confirm .fancybox_confirm_txt{ text-align:center;}
+
+/* application fancybox limit width */
+.heightauto{ height:auto !important;  overflow: inherit !important;}
+
+.onfinace_view{ width:960px; overflow: inherit !important;}
+.onfinace_order{ width:960px;}
+.onfinace_delivery{ width:520px; height:140px;}
+.onfinace_trial{width:960px;}
+.onfinace_appoint{width:500px;height:140px;}
+.onfinace_rejected{}
+.detain_manage,.repayment_manage{ width:500px;}
+
+.company_addInfo_pop{ width:960px; overflow: inherit !important; }
+.financ_apl_pop{ width:500px; }
+.confirm_pop_m{ width:500px; }
+.confirm_pop_s{ width:300px; }
+.partner_info,.contact_info{ width:550px; overflow: inherit !important;}
+.paper_upload{ width:800px;overflow:hidden;}
+
+.process_start_pop{ width:500px; overflow: inherit !important;}
+.process_task_pop{ width:600px;overflow: inherit !important;}
+.process_branch_pop{ width:500px;overflow: inherit !important;}
+.menu_add_pop,.menu_edit_pop,.menu_view_pop{ width:650px; padding-bottom:30px;}
+
+.popsize_s{ width:300px; overflow: inherit !important;  }
+.popsize_m{ width:500px; overflow: inherit !important;  }
+.popsize_l{ width:960px; /* overflow:hidden; */ }

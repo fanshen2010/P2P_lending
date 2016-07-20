@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.cms.query.ArticleQuery">
+
+	<!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        CATEGORY,
+        TITLE,
+        CONTENT,
+        ORDER_NUM,
+        POST_AT,
+        RECOMMEND_FLAG,
+        SEO_DESCRIPTION,
+        SEO_KEYWORDS,
+        STATUS,
+        TITLE_PIC,
+        VISITS,
+        ARTICLE_SOURCE,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+    
+  <!--查询文章列表，按序号和更新日期排序  findSinglePageByCriteria方法 -->
+  <select id="findSinglePageByCriteria" parameterType="ArticleCriteria" resultType="Article">
+  		SELECT 
+        	<include refid="base_column" />
+        FROM 
+        	ARTICLE
+    	<where>
+    		<if test="criteria.id !=null and criteria.id != ''">
+    			AND ID=#{criteria.id}
+    		</if>
+    		<if test="criteria.category !=null and criteria.category != ''">
+    			AND CATEGORY =#{criteria.category}
+    		</if>
+    		<if test="criteria.title !=null and criteria.title != ''">
+    			AND TITLE LIKE CONCAT(CONCAT('%',#{criteria.title}),'%')
+    		</if>
+    		<if test="criteria.content !=null and criteria.content != ''">
+    			AND CONTENT LIKE CONCAT(CONCAT('%',#{criteria.content}),'%')
+    		</if>
+    		<if test="criteria.orderNum !=null and criteria.orderNum != ''">
+    			AND ORDER_NUM =#{criteria.}
+    		</if>
+    		<if test="criteria.postAt !=null">
+    			AND POST_AT =#{criteria.postAt}
+    		</if>
+    		<if test="criteria.recommendFlag !=null and criteria.recommendFlag != ''">
+    			AND RECOMMEND_FLAG =#{criteria.recommendFlag}
+    		</if>
+    		<if test="criteria.seoDescription !=null and criteria.seoDescription != ''">
+    			AND SEO_DESCRIPTION LIKE CONCAT(CONCAT('%',#{criteria.seoDescription}),'%')
+    		</if>
+    		<if test="criteria.seoKeywords !=null and criteria.seoKeywords != ''">
+    			AND SEO_KEYWORDS LIKE CONCAT(CONCAT('%',#{criteria.criteria.seoKeywords}),'%')
+    		</if>
+    		<if test="criteria.status !=null and criteria.status != ''">
+    			AND STATUS =#{criteria.status}
+    		</if>
+    		<if test="criteria.titlePic !=null and criteria.titlePic != ''">
+    			AND TITLE_PIC =#{criteria.titlePic}
+    		</if>
+    		<if test="criteria.visits !=null and criteria.visits != ''">
+    			AND VISITS =#{criteria.visits}
+    		</if>
+    		<if test="criteria.articleSource !=null and criteria.articleSource != ''">
+    			AND ARTICLE_SOURCE =#{criteria.articleSource}
+    		</if>
+    		<if test="criteria.createTime !=null and criteria.createTime != ''">
+    			AND CREATE_TIME =#{criteria.createTime}
+    		</if>
+    		<if test="criteria.updateTime !=null and criteria.updateTime != ''">
+    			AND UPDATE_TIME =#{criteria.updateTime}
+    		</if>
+    		<if test="criteria.createUserId !=null and criteria.createUserId != ''">
+    			AND CREATE_USER_ID =#{criteria.createUserId}
+    		</if>
+    		<if test="criteria.updateUserId !=null and criteria.updateUserId != ''">
+    			AND UPDATE_USER_ID =#{criteria.updateUserId}
+    		</if>
+    		<if test="criteria.version !=null and criteria.version != ''">
+    			AND VERSION =#{criteria.version}
+    		</if>
+    	</where>
+      		
+     	ORDER BY ORDER_NUM ASC,UPDATE_TIME DESC
+  </select>
+  
+  <!-- 根据文章所属栏目父级栏目及其他自定义条件查询 -->
+  <select id="findPageByCustomCriteria" parameterType="ArticleCustomCriteria" resultType="Article">
+  		SELECT 
+        	<include refid="base_column" />
+        FROM 
+        	ARTICLE
+        <where>
+        	<if test="criteria.id !=null and criteria.id != ''">
+    			AND ID=#{criteria.id}
+    		</if>
+    		<if test="criteria.category !=null and criteria.category != ''">
+    			AND CATEGORY =#{criteria.category}
+    		</if>
+    		<if test="criteria.title !=null and criteria.title != ''">
+    			AND TITLE LIKE CONCAT(CONCAT('%',#{criteria.title}),'%')
+    		</if>
+    		<if test="criteria.orderNum !=null and criteria.orderNum != ''">
+    			AND ORDER_NUM =#{criteria.}
+    		</if>
+    		<if test="criteria.postAt !=null">
+    			AND POST_AT =#{criteria.postAt}
+    		</if>
+    		<if test="criteria.recommendFlag !=null and criteria.recommendFlag != ''">
+    			AND RECOMMEND_FLAG =#{criteria.recommendFlag}
+    		</if>
+    		<if test="criteria.status !=null and criteria.status != ''">
+    			AND STATUS =#{criteria.status}
+    		</if>
+    		<if test="criteria.visits !=null and criteria.visits != ''">
+    			AND VISITS =#{criteria.visits}
+    		</if>
+    		<if test="criteria.articleSource != null and criteria.articleSource != ''">
+    			AND ARTICLE_SOURCE=#{criteria.articleSource}
+    		</if>
+    		<if test="criteria.parentCategory != null and criteria.parentCategory != ''">
+    			AND CATEGORY IN (SELECT ID FROM CATEGORY WHERE PARENT_CATEGORY=#{criteria.parentCategory})
+    		</if>
+        </where>
+        	ORDER BY ORDER_NUM ASC,CREATE_TIME DESC
+  </select>
+  
+  <!-- 根据所属栏目Id删除文章 -->
+  <delete id="deleteByCategory" parameterType="string">
+  		DELETE FROM 
+            ARTICLE
+         WHERE
+            CATEGORY = #{categoryId} 
+  </delete>
+ </mapper>

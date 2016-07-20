@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="p2p_mgrweb">
+        <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/src/main/resources/web-${profiles.active}.xml"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <dependent-module archiveName="p2p_framework-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_framework/p2p_framework">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_corebiz-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_corebiz/p2p_corebiz">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_domain-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_domain/p2p_domain">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_security-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_security/p2p_security">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_cms-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_cms/p2p_cms">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_message-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_message/p2p_message">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_common-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_common/p2p_common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="p2p_payment-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/p2p_payment/p2p_payment">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="p2p_mgrweb"/>
+        <property name="java-output-path" value="/p2p_mgrweb/target/classes"/>
+    </wb-module>
+</project-modules>

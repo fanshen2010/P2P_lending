@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.repository.RepayDetailRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        REPAY_DETAIL_CODE,
+        NUM,
+        REPAY_PLAN_DATE,
+        REPAY_REAL_DATE,
+        RECEIVED_INTEREST,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_SUM,
+        RECEIVABLE_INTEREST,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_SUM,
+        OVERDUE_DAYS,
+        PUNITIVE_DELAY_PAYMENT,
+        PUNITIVE_INTEREST,
+        STATUS,
+        ACCOUNT_NO,
+        ACCOUNT_TYPE,
+        LOAN_CODE,
+        SERIAL_NUMBER,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="RepayDetail">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            REPAY_DETAIL
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findRepayDetailByrepayDetailCode方法 -->
+    <select id="findRepayDetailByRepayDetailCode" parameterType="string" resultType="RepayDetail">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            REPAY_DETAIL
+        WHERE
+            REPAY_DETAIL_CODE = #{repayDetailCode}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="RepayDetail">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            REPAY_DETAIL
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="RepayDetailCriteria" resultType="RepayDetail">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            REPAY_DETAIL
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="RepayDetail">
+        INSERT INTO
+            REPAY_DETAIL
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{repayDetailCode},
+          #{num},
+          #{repayPlanDate},
+          #{repayRealDate},
+          #{receivedInterest},
+          #{receivedPrincipal},
+          #{receivedSum},
+          #{receivableInterest},
+          #{receivablePrincipal},
+          #{receivableSum},
+          #{overdueDays},
+          #{punitiveDelayPayment},
+          #{punitiveInterest},
+          #{status},
+          #{accountNo},
+          #{accountType},
+          #{loanCode},
+          #{serialNumber},
+          #{tenantId},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="RepayDetail">
+        UPDATE
+            REPAY_DETAIL
+        <set>
+            <if test="repayDetailCode != null">
+                REPAY_DETAIL_CODE = #{repayDetailCode},
+            </if>
+            <if test="num != null">
+                NUM = #{num},
+            </if>
+            <if test="repayPlanDate != null">
+                REPAY_PLAN_DATE = #{repayPlanDate},
+            </if>
+            <if test="repayRealDate != null">
+                REPAY_REAL_DATE = #{repayRealDate},
+            </if>
+            <if test="receivedInterest != null">
+                RECEIVED_INTEREST = #{receivedInterest},
+            </if>
+            <if test="receivedPrincipal != null">
+                RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            </if>
+            <if test="receivedSum != null">
+                RECEIVED_SUM = #{receivedSum},
+            </if>
+            <if test="receivableInterest != null">
+                RECEIVABLE_INTEREST = #{receivableInterest},
+            </if>
+            <if test="receivablePrincipal != null">
+                RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            </if>
+            <if test="receivableSum != null">
+                RECEIVABLE_SUM = #{receivableSum},
+            </if>
+            <if test="overdueDays != null">
+                OVERDUE_DAYS = #{overdueDays},
+            </if>
+            <if test="punitiveDelayPayment != null">
+                PUNITIVE_DELAY_PAYMENT = #{punitiveDelayPayment},
+            </if>
+            <if test="punitiveInterest != null">
+                PUNITIVE_INTEREST = #{punitiveInterest},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="accountNo != null">
+                ACCOUNT_NO = #{accountNo},
+            </if>
+            <if test="accountType != null">
+                ACCOUNT_TYPE = #{accountType},
+            </if>
+            <if test="loanCode != null">
+                LOAN_CODE = #{loanCode},
+            </if>
+            <if test="serialNumber != null">
+                SERIAL_NUMBER = #{serialNumber},
+            </if>
+            <if test="tenantId != null">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="RepayDetail">
+        UPDATE
+            REPAY_DETAIL
+        SET
+            REPAY_DETAIL_CODE = #{repayDetailCode},
+            NUM = #{num},
+            REPAY_PLAN_DATE = #{repayPlanDate},
+            REPAY_REAL_DATE = #{repayRealDate},
+            RECEIVED_INTEREST = #{receivedInterest},
+            RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            RECEIVED_SUM = #{receivedSum},
+            RECEIVABLE_INTEREST = #{receivableInterest},
+            RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            RECEIVABLE_SUM = #{receivableSum},
+            OVERDUE_DAYS = #{overdueDays},
+            PUNITIVE_DELAY_PAYMENT = #{punitiveDelayPayment},
+            PUNITIVE_INTEREST = #{punitiveInterest},
+            STATUS = #{status},
+            ACCOUNT_NO = #{accountNo},
+            ACCOUNT_TYPE = #{accountType},
+            LOAN_CODE = #{loanCode},
+            SERIAL_NUMBER = #{serialNumber},
+            TENANT_ID = #{tenantId},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            REPAY_DETAIL
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            REPAY_DETAIL
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

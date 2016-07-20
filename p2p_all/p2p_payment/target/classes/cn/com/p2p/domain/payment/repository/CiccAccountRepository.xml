@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.payment.repository.CiccAccountRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        USER_NAME,
+        PAYMENT_ACCOUNT_NUMBER,
+        USER_TYPE,
+        BALANCE,
+        CUST_CODE,
+        USER_ID
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="CiccAccount">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            CICC_ACCOUNT
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="CiccAccount">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            CICC_ACCOUNT
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="CiccAccountCriteria" resultType="CiccAccount">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            CICC_ACCOUNT
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="CiccAccount">
+        INSERT INTO
+            CICC_ACCOUNT
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{userName},
+          #{paymentAccountNumber},
+          #{userType},
+          #{balance},
+          #{custCode},
+          #{userId}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="CiccAccount">
+        UPDATE
+            CICC_ACCOUNT
+        <set>
+            <if test="userName != null">
+                USER_NAME = #{userName},
+            </if>
+            <if test="paymentAccountNumber != null">
+                PAYMENT_ACCOUNT_NUMBER = #{paymentAccountNumber},
+            </if>
+            <if test="userType != null">
+                USER_TYPE = #{userType},
+            </if>
+            <if test="balance != null">
+                BALANCE = #{balance},
+            </if>
+            <if test="custCode != null">
+                CUST_CODE = #{custCode},
+            </if>
+            <if test="userId != null">
+                USER_ID = #{userId}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="CiccAccount">
+        UPDATE
+            CICC_ACCOUNT
+        SET
+            USER_NAME = #{userName},
+            PAYMENT_ACCOUNT_NUMBER = #{paymentAccountNumber},
+            USER_TYPE = #{userType},
+            BALANCE = #{balance},
+            CUST_CODE = #{custCode},
+            USER_ID = #{userId}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            CICC_ACCOUNT
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            CICC_ACCOUNT
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

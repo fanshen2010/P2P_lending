@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanPersonalInfoQuery">
+
+    <!--查询个人融资的最近一次融资信息 对应query findLatestLoanPersonalInfo方法 -->
+    <select id="findLatestLoanPersonalInfo" parameterType="String" resultType="LoanPersonalInfo">
+        SELECT
+        	LOAN_CODE,
+        	NAME,
+        	IDENTITY,
+        	CELLPHONE,
+            BASIC_JSON,
+            JOB_JSON,
+            FAMILY_JSON,
+            CONTACT_JSON,
+            HOUSE_JSON,
+            CAR_JSON,
+            CREDITCARD_JSON,
+            CREDIT_JSON,
+            ELECT_JSON         
+        FROM
+            LOAN_PERSONAL_INFO LP
+    	<where>
+    		<if  test="identity!=null">
+	        	AND LP.CREATE_TIME=(
+	    		SELECT 
+	    			MAX(LP2.CREATE_TIME) 	
+	    		FROM 
+	    			LOAN_PERSONAL_INFO LP2
+	    		WHERE LP2.IDENTITY = #{identity}
+	    		)
+	        </if>
+        </where> 
+    </select>
+    
+     <!--真删除 对应query delete方法 -->    
+    <delete id="deleteByLoanCode" parameterType="string">
+        DELETE FROM 
+            LOAN_PERSONAL_INFO
+        WHERE
+            LOAN_CODE = #{loanCode}
+    </delete>
+</mapper>

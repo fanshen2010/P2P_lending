@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+           http://www.springframework.org/schema/security  
+           http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	<http pattern="/**/login.htm*" security="none" />
+	<http pattern="/**/*.jpg" security="none" />
+	<http pattern="/**/*.png" security="none" />
+	<http pattern="/**/*.gif" security="none" />
+	<http pattern="/**/*.css" security="none" />
+	<http pattern="/**/*.js" security="none" />
+	<http pattern="/**/favicon.ico" security="none" />
+	<http pattern="/error.html" security="none"  />
+	<http pattern="/verifyCode.htm" security="none"  />
+	<http pattern="/paymentOnline.html" security="none"  />
+	<http pattern="/register.htm" security="none"  />
+	<http pattern="/save.htm" security="none"  />
+	<http pattern="/checkstaff.htm" security="none"  />
+	<http pattern="/upload.htm" security="none"  />
+	
+	 
+	<!-- auto-config="false"（不采用自动配置）use-expressions="true"（采用表带式 例：isAuthenticated()） -->
+	<http auto-config="false" access-denied-page="/common/denied.jsp" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+
+		<intercept-url pattern="/**" access="isAuthenticated()"  />
+		<!-- <form-login login-page="/login.htm"
+			authentication-failure-url="/login.htm?error=true"
+			default-target-url="/investment/allinvest/index.htm"
+			always-use-default-target="true" /> -->
+
+		<!-- 第二次登录阻止，用户会被转发到 form-login 标签里定义的 authentication-failure-url 的地址 如果是form-base登录，用户会被转发到 
+			session-management 中 session-authention-error-url 的地址 session-fixation-protection 
+			防止Session固定攻击(2.3.3.3) -migrateSession 创建一个新的session,把原来session中所有属性复制到新session中。这是默认值 
+			-none 什么也不做 -newSession 创建一个新的"干净的"session,不会复制session中的数据。 -->
+		<session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" /> 
+
+        <!-- 自定义限制用户的最大登陆数,防止一个账号被多人使用 -->  
+        <custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
+        
+        <!-- session过期时配置 -->  
+		<logout invalidate-session="true" logout-url="/logout.htm" logout-success-url="${login_from_url}" />
+
+        <!-- 自定义loginfilter 替换FORM_LOGIN_FILTER -->
+		<custom-filter ref="loginFilter" before="FORM_LOGIN_FILTER" />
+		
+		 <!-- 自定义loginfilter 替换FILTER_SECURITY_INTERCEPTOR -->
+		<custom-filter ref="authenticationFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+	
+	<!-- 防止session攻击详细配置 开始 -->
+	<beans:bean id="sessionAuthenticationStrategy"  
+        class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">  
+        <beans:constructor-arg name="sessionRegistry" ref="sessionRegistry" />  
+        <beans:property name="maximumSessions" value="1" />  
+        <!--  <beans:property name="exceptionIfMaximumExceeded" value="true" />  -->
+    </beans:bean>  
+    <beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />  
+	<!-- 防止session攻击详细配置 结束 -->          
+    
+    <!-- 限制用户的最大登陆数,防止一个账号被多人使用 配置开始-->      
+    <beans:bean id="concurrencyFilter"  
+        class="org.springframework.security.web.session.ConcurrentSessionFilter">  
+        <beans:property name="sessionRegistry" ref="sessionRegistry" />  
+        <beans:property name="expiredUrl" value="${login_from_url}" />  
+    </beans:bean>
+    <!-- 限制用户的最大登陆数,防止一个账号被多人使用 配置结束-->
+
+  
+    
+	<!-- <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> 
+		<beans:property name="basename" value="classpath:org/springframework/security/messages_zh_CN" 
+		/> </beans:bean> -->
+
+
+	<!-- <global-method-security secured-annotations="enabled" jsr250-annotations="enabled"></global-method-security> -->
+
+	<!-- 事件监听:实现了 ApplicationListener监听接口，包括AuthenticationCredentialsNotFoundEvent 
+		事件， AuthorizationFailureEvent事件，AuthorizedEvent事件， PublicInvocationEvent事件 -->
+	<beans:bean class="org.springframework.security.authentication.event.LoggerListener" />
+
+	<!-- 用户的密码加密或解密 -->
+	<!-- <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" 
+		/> -->
+
+	<beans:bean id="authenticationFilter" class="cn.com.p2p.security.filter.MyFilterSecurityInterceptor">
+	    <!-- 用户拥有的权限 -->
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<!-- 用户是否拥有所请求资源的权限 -->  
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager" />
+		<!-- 资源与权限对应关系 -->
+		<beans:property name="securityMetadataSource" ref="customSecurityMetadataSource" />
+	</beans:bean>
+	
+	<beans:bean id="loginFilter"
+		class="cn.com.p2p.security.filter.BackLoginFilter">
+		<beans:property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy" />
+		<beans:property name="filterProcessesUrl" value="/logincheck.htm"></beans:property>
+		<beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean
+				class="cn.com.p2p.security.control.back.MyLoginAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="${login_success_url}"></beans:property>
+				<beans:property name="alwaysUseDefaultTargetUrl" value="true"></beans:property>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean
+				class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="${login_from_url}"></beans:property>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="userLoginService">
+			<password-encoder ref="passwordEncoder">
+				<salt-source user-property="salt" />
+			</password-encoder>
+		</authentication-provider>
+	</authentication-manager>
+	<beans:bean id="passwordEncoder" class="cn.com.p2p.security.control.CheckPasswordEncoder" />
+	<beans:bean id="passwordEncoderUser" class="cn.com.p2p.security.control.CheckUserPasswordEncoder" />
+	
+    <!-- 用户是否拥有所请求资源的权限 -->
+	<beans:bean id="accessDecisionManager" class="cn.com.p2p.security.control.back.MyAccessDecisionManager">
+	</beans:bean>
+
+    <!-- 用户拥有的权限 -->
+	<beans:bean id="userLoginService" class="cn.com.p2p.security.login.service.impl.BackLoginServiceImpl">
+	</beans:bean>
+
+	<!-- 资源与权限对应关系 -->
+	<beans:bean id="customSecurityMetadataSource"
+		class="cn.com.p2p.security.control.back.MySecurityMetaDataSource" init-method="init">
+		<beans:property name="notFindDenied" value="false"></beans:property>
+		<beans:property name="notCheckUrlList">
+			<beans:list>
+				<beans:value>/account/ssss.htm</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+    <!-- 入口 -->
+    <beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">  
+        <beans:property name="loginFormUrl" value="${login_from_url}" />  
+    </beans:bean>
+</beans:beans>

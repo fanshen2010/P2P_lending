@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.message.query.MessageTempleteQuery">
+    <!--短信管理和消息管理的分页查询  -->
+	<select id="findPageByCriteria" parameterType="MessageManagementCriteria" resultType="MessageTemplete">
+       SELECT
+			ID,
+			MSG_TYPE,
+			MSG_TITLE,
+			MSG_TEML,
+			MSG_RECEIVE_TYPE,
+			VALID_FLAG,
+			TENANT_CD
+       FROM 
+            MESSAGE_TEMPLETE
+      <where> 
+       		<if test="criteria.id!=null and criteria.id!=''">
+       			AND ID = #{criteria.id}
+       		</if>
+       		<if test="criteria.msgType!=null and criteria.msgType!=''">
+          		AND	MSG_TYPE = #{criteria.msgType}
+          	</if>
+          	<if test="criteria.msgTitle!=null and criteria.msgTitle!=''">
+       			AND MSG_TITLE LIKE CONCAT(CONCAT('%',#{criteria.msgTitle}),'%')
+       		</if>
+       		<if test="criteria.msgTeml!=null and criteria.msgTeml!=''">
+          		AND	MSG_TEML = #{criteria.msgTeml}
+          	</if>
+          	<if test="criteria.msgReceiveType!=null and criteria.msgReceiveType!=''">
+          		AND	MSG_RECEIVE_TYPE = #{criteria.msgReceiveType}
+          	</if>
+          	<if test="criteria.validFlag!=null and criteria.validFlag!=''">
+       			AND VALID_FLAG = #{criteria.validFlag}
+       		</if>
+       		<if test="criteria.tenantCd!=null and criteria.tenantCd!=''">
+          		AND	TENANT_CD = #{criteria.tenantCd}
+          	</if>
+       </where>
+    </select>
+    
+    <!--短信管理和消息管理的分页查询  -->
+	<select id="findMessageReceiverByMsgId" parameterType="String" resultType="MessageReceiver">
+       SELECT
+			ID,
+			RECEIVER_ID,
+			RECEIVER_NAME,
+			RECEIVER_PHONE,
+			MSG_TYPE,
+			MSG_RECEIVE_TYPE,
+			MSG_ID,
+			TENANT_CD
+       FROM 
+            MESSAGE_RECEIVER
+       WHERE
+       		MSG_ID = #{receiverId}
+    </select>
+</mapper>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.system.repository.SysSettingRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        GROUP_CODE,
+        GROUP_TITLE,
+        SETTING_CODE,
+        SETTING_TITLE,
+        SETTING_VALUE,
+        SETTING_TYPE,
+        REMARK,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="SysSetting">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            SYS_SETTING
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findSysSettingBysettingCode方法 -->
+    <select id="findSysSettingBySettingCode" parameterType="string" resultType="SysSetting">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            SYS_SETTING
+        WHERE
+            SETTING_CODE = #{settingCode}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="SysSetting">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            SYS_SETTING
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="SysSettingCriteria" resultType="SysSetting">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            SYS_SETTING
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="SysSetting">
+        INSERT INTO
+            SYS_SETTING
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{groupCode},
+          #{groupTitle},
+          #{settingCode},
+          #{settingTitle},
+          #{settingValue},
+          #{settingType},
+          #{remark},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="SysSetting">
+        UPDATE
+            SYS_SETTING
+        <set>
+            <if test="groupCode != null">
+                GROUP_CODE = #{groupCode},
+            </if>
+            <if test="groupTitle != null">
+                GROUP_TITLE = #{groupTitle},
+            </if>
+            <if test="settingCode != null">
+                SETTING_CODE = #{settingCode},
+            </if>
+            <if test="settingTitle != null">
+                SETTING_TITLE = #{settingTitle},
+            </if>
+            <if test="settingValue != null">
+                SETTING_VALUE = #{settingValue},
+            </if>
+            <if test="settingType != null">
+                SETTING_TYPE = #{settingType},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+             SETTING_CODE = #{settingCode}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="SysSetting">
+        UPDATE
+            SYS_SETTING
+        SET
+            GROUP_CODE = #{groupCode},
+            GROUP_TITLE = #{groupTitle},
+            SETTING_CODE = #{settingCode},
+            SETTING_TITLE = #{settingTitle},
+            SETTING_VALUE = #{settingValue},
+            SETTING_TYPE = #{settingType},
+            REMARK = #{remark},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            SYS_SETTING
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            SYS_SETTING
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.repository.PfmUserRoleRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        ROLE_ID,
+        USER_ID,
+        TENANT_CD
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="PfmUserRole">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_USER_ROLE
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findPfmUserRoleByuserId方法 -->
+    <select id="findPfmUserRoleByUserId" parameterType="string" resultType="PfmUserRole">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            PFM_USER_ROLE
+        WHERE
+            USER_ID = #{userId}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="PfmUserRole">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_USER_ROLE
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="PfmUserRoleCriteria" resultType="PfmUserRole">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PFM_USER_ROLE
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="PfmUserRole">
+        INSERT INTO
+            PFM_USER_ROLE
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{roleId},
+          #{userId},
+          #{tenantCd}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="PfmUserRole">
+        UPDATE
+            PFM_USER_ROLE
+        <set>
+            <if test="roleId != null">
+                ROLE_ID = #{roleId},
+            </if>
+            <if test="userId != null">
+                USER_ID = #{userId},
+            </if>
+            <if test="tenantCd != null">
+                TENANT_CD = #{tenantCd}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="PfmUserRole">
+        UPDATE
+            PFM_USER_ROLE
+        SET
+            ROLE_ID = #{roleId},
+            USER_ID = #{userId},
+            TENANT_CD = #{tenantCd}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            PFM_USER_ROLE
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PFM_USER_ROLE
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee   
+    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name></display-name>
+    <filter>
+       <filter-name>htmlCharacterTransfer</filter-name>
+       <filter-class>cn.com.p2p.framework.web.filter.HtmlCharacterFilter</filter-class>
+   </filter>
+	<!-- 编码统一最好放最上面，最先加载，防止乱码 -->
+	<filter>
+		<filter-name>Set Character Encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<!-- 强制进行转码 -->
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param> 
+	</filter>
+	<filter-mapping>
+	<filter-name>htmlCharacterTransfer</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Set Character Encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 然后接着是SpringSecurity必须的filter 优先配置，让SpringSecurity先加载，防止SpringSecurity拦截失效 -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>cn.com.p2p.framework.web.filter.MyDelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>encryptKey</param-name>
+			<param-value>09OTPEXW23k=</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 添加对struts2的支持 -->
+	<filter>
+		<filter-name>encodeFilter</filter-name>
+		<filter-class>cn.com.p2p.framework.web.filter.EncodeFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodeFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 添加对spring的支持 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml;classpath:applicationContext-security.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+	<!-- 中金支付 -->
+	<!-- 
+ 	<context-param>
+		<param-name>system.config.path</param-name>
+		<param-value>D:\p2p\workspace\p2p\p2p_payment\config\system</param-value>
+	</context-param>
+	<context-param>
+		<param-name>payment.config.path</param-name>
+		<param-value>D:\p2p\workspace\p2p\p2p_payment\config\payment</param-value>
+	</context-param>
+	<context-param>
+		<param-name>sms.config.path</param-name>
+		<param-value>D:\p2p\workspace\p2p\p2p_payment\config\sms</param-value>
+	</context-param>
+	<listener>
+		<listener-class>cn.com.p2p.payment.institution.system.WebappListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>ReceiveNotice</servlet-name>
+		<servlet-class>cn.com.p2p.payment.serverlet.PaymentRequestServerlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ReceiveNotice</servlet-name>
+		<url-pattern>/payment/pageCallBack.html</url-pattern>
+	</servlet-mapping>
+	-->
+ 	<!-- 中金支付 -->
+	
+
+	<welcome-file-list>
+		<welcome-file>index.htm</welcome-file>
+	</welcome-file-list>
+</web-app>  

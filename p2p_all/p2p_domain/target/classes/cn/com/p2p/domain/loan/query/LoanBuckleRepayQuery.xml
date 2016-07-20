@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanBuckleRepayQuery">
+
+	<resultMap id="RepayResultMap" type="LoanBuckleRepay">
+	        <result property="loanCode" column="LOAN_CODE" />
+	        <result property="loanProject" column="LOAN_NAME" />
+	        <result property="customName" column="CUSTOM_NAME" />
+	        <result property="interestManner" column="LOAN_INTEREST_MANNER" />
+	        <result property="currentNum" column="NUM" />
+	        <result property="receivableNum" column="RECEIVABLE_REPAY_NUMBER" />
+	        <result property="loanAmount" column="LOAN_AMOUNT" />
+	        <result property="repayType" column="REPAY_TYPE" />
+	        <result property="repayPlanDate" column="REPAY_PLAN_DATE" />
+	        <result property="repayStatus" column="STATUS" />
+	</resultMap>
+	
+
+    <!-- 根据当前查询条件 查询还款数据  对应 findLoanBuckleRepay方法 -->
+    <select id="findLoanBuckleRepay" parameterType="LoanRepaymentCriteria" resultMap="RepayResultMap">
+        SELECT 
+        	l.LOAN_CODE AS 'LOAN_CODE',
+			l.LOAN_NAME AS 'LOAN_NAME',
+			l.CUSTOM_NAME AS 'CUSTOM_NAME',
+			l.LOAN_INTEREST_MANNER AS 'LOAN_INTEREST_MANNER',
+			r.NUM AS 'NUM',
+			l.RECEIVABLE_REPAY_NUMBER AS 'RECEIVABLE_REPAY_NUMBER',
+			l.LOAN_AMOUNT AS 'LOAN_AMOUNT',
+			l.REPAY_TYPE AS 'REPAY_TYPE',
+			r.REPAY_PLAN_DATE AS 'REPAY_PLAN_DATE',
+			r.STATUS AS 'STATUS'
+        FROM 
+        	LOAN l,REPAY_DETAIL r
+        WHERE r.LOAN_CODE=l.LOAN_CODE AND r.STATUS = '0'
+        
+    	<!-- 不为空则添加融资编号条件 -->
+    	<if test="repay.loanCode!=null and repay.loanCode!=''">
+    		AND l.LOAN_CODE=#{repay.loanCode}
+    	</if>
+    	<!-- 不为空则添加融资项目条件 -->
+    	<if test="repay.loanProject!=null and repay.loanProject!=''">
+    		AND l.LOAN_NAME LIKE CONCAT(CONCAT('%',#{repay.loanProject}),'%')
+    	</if>
+    	<!-- 不为空则添加客户名称条件 -->
+    	<if test="repay.customName!=null and repay.customName!=''">
+    		AND l.CUSTOM_NAME LIKE CONCAT(CONCAT('%',#{repay.customName}),'%')
+    	</if>
+    	<!-- 不为空则添加最小还款日期条件 -->
+    	<if test="repay.repayDateMin!=null and repay.repayDateMin!=''">
+    		AND r.REPAY_PLAN_DATE &gt;=#{repay.repayDateMin}
+    	</if>
+    	<!-- 不为空则添加最大还款日期条件 -->
+    	<if test="repay.repayDateMax!=null and repay.repayDateMax!=''">
+    		AND r.REPAY_PLAN_DATE &lt;=#{repay.repayDateMax}
+    	</if>
+    </select>
+</mapper>

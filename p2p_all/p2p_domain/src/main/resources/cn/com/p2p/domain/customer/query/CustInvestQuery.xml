@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.customer.query.CustInvestQuery">
+
+	<resultMap type="InvestorsDto" id="InvestorsResultMap">
+	  <result property="userName" column="USER_NAME" />
+	  <result property="celphone" column="CELPHONE" />
+	  <result property="userId" column="ID" />
+	  <result property="totalAmount" column="TOTAL_AMOUNT" />
+	  <result property="payingAmount" column="PAYING_AMOUNT" />
+	  <result property="effectiveAmount" column="EFFECTIVE_AMOUNT" />
+	  <result property="interest" column="INTEREST" />
+	  <result property="status" column="STATUS" />
+	</resultMap>
+	
+	
+	<!-- 根据投资客户条件查询投资客户 -->
+	<select id="findPageInvestorsByCriteria" parameterType="InvestorsCriteria" resultMap="InvestorsResultMap">
+		SELECT * FROM (
+			SELECT
+			U.LOGIN AS 	USER_NAME,
+			U.CELPHONE AS CELPHONE,
+			CI.USER_ID AS ID,
+			SUM(I.INVESTMENT_AMOUNT) as TOTAL_AMOUNT,
+			SUM(CASE WHEN I.STATUS = '07' THEN INVESTMENT_AMOUNT ELSE 0 END ) AS  PAYING_AMOUNT,
+			SUM(CASE WHEN I.STATUS = '02' OR I.STATUS = '14' THEN INVESTMENT_AMOUNT ELSE 0 END ) AS EFFECTIVE_AMOUNT,
+			SUM(RECEIVABLE_INTEREST - RECEIVED_INTEREST + RECEIVABLE_PUNITIVE - RECEIVED_PUNITIVE )  AS INTEREST,
+			U.ACTIVE AS STATUS
+			 FROM CUST_INVEST CI, INVEST I,WEB_USER U 
+			<where>
+					 AND I.STATUS IN ('02','03','04','05','06','07','08','09','10','11','12','13','14')
+					 
+					 <if test="criteria.userName!=null">
+					 	AND U.LOGIN LIKE   CONCAT(CONCAT('%',#{criteria.userName}),'%')
+					 </if>
+					 <if test="criteria.celphone!=null">
+					 	AND U.CELPHONE LIKE   CONCAT(CONCAT('%',#{criteria.celphone}),'%')
+					 </if>
+					 <if test="criteria.status!=null">
+					 	AND U.ACTIVE = #{criteria.status}
+					 </if>
+					 <!-- 增加关联关系  2015-10-15 14:45 -->
+					 AND CI.USER_ID = U.ID
+					 AND I.USER_ID = U.ID
+			</where>
+			GROUP BY CI.USER_ID
+		) A
+	</select>
+
+</mapper>

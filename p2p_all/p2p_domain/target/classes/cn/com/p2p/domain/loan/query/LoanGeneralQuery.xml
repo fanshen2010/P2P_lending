@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanGeneralQuery">
+	<!-- 融资通用查询SQL定义，对应cn.com.p2p.domain.loan.query.LoanGeneralQuery.findGeneralLoanList -->
+    <select id="findGeneralLoanList" parameterType="LoanGeneralCriteria" resultType="Loan">
+        SELECT 
+	        LOAN_CODE,
+	        LOAN_NAME,
+	        CUSTOM_NAME,
+	        LOAN_AMOUNT,
+	        LOAN_INTEREST_RATES,
+	        LOAN_TIME_LIMIT,
+	        LOAN_TIME_LIMIT_UNIT,
+	        LOAN_STATUS
+        FROM
+            LOAN
+    <where>
+    	<!-- 拼装【融资编号】，模糊查询 -->
+    	<if test="null != loanParameter.loanCode and '' != loanParameter.loanCode">
+     		AND LOAN_CODE LIKE CONCAT(CONCAT('%',#{loanParameter.loanCode}),'%') 	
+        </if>
+        <!-- 拼装【融资项目(项目名称)】，模糊查询 -->
+        <if test="null != loanParameter.loanName and '' != loanParameter.loanName">
+     		AND LOAN_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.loanName}),'%') 	
+        </if>
+        <!-- 拼装【客户名称】，模糊查询 -->
+        <if test="null != loanParameter.customName and '' != loanParameter.customName">
+     		AND CUSTOM_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.customName}),'%') 	
+        </if>
+        <!-- 拼装【最小融资金额】，大于等于 -->
+        <if test="null != loanParameter.loanAmountMin">
+     		AND LOAN_AMOUNT &gt;= #{loanParameter.loanAmountMin} 	
+        </if>
+        <!-- 拼装【最大融资金额】，小于等于 -->
+        <if test="null != loanParameter.loanAmountMax">
+     		AND LOAN_AMOUNT &lt;= #{loanParameter.loanAmountMin} 	
+        </if>
+        <!-- 拼装【最小年化收益率】，大于等于 -->
+        <if test="null != loanParameter.loanInterestRatesMin">
+     		AND LOAN_INTEREST_RATES &gt;= #{loanParameter.loanInterestRatesMin} 	
+        </if>
+        <!-- 拼装【最大年化收益率】，小于等于 -->
+        <if test="null != loanParameter.loanInterestRatesMax">
+     		AND LOAN_INTEREST_RATES &lt;= #{loanParameter.loanInterestRatesMax} 	
+        </if>
+        <!-- 拼装【融资状态】，等于 -->
+        <if test="null != loanParameter.loanStatus and '' != loanParameter.loanStatus">
+     		AND LOAN_STATUS = #{loanParameter.loanStatus} 	
+        </if>
+    </where>
+    </select>
+    
+</mapper>

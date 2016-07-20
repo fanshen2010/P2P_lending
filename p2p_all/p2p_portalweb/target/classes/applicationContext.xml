@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <context:property-placeholder location="classpath*:/spring/fero-db-dev.properties,classpath:spring_secutity.properties" />
+	<bean class="cn.com.p2p.framework.context.SpringBeanContext"
+		lazy-init="false" />
+	<import resource="classpath:/spring/fero-context.xml" />
+	<bean id="settings"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:setting-dev.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="logConfig" class="cn.com.p2p.framework.log.LogConfig">
+	  <property name="logfullpath" value=""/>
+	</bean>
+	<bean
+		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<!-- 自动加载构建bean -->
+	<context:component-scan base-package="cn.com.p2p.framework.web.freemarker" />
+	<context:component-scan base-package="cn.com.p2p.*.service" />
+	<context:component-scan base-package="cn.com.p2p.*.*.service"/>
+	<context:component-scan base-package="cn.com.p2p.security.control.password.service"/>
+	<context:component-scan base-package="cn.com.p2p.message.internal.send"/>
+	 
+	<!-- 资源与权限对应关系 -->
+	<bean id="customSecurityMetadataSource"
+		class="cn.com.p2p.security.control.back.MySecurityMetaDataSource" init-method="init">
+	</bean>
+	<bean id="passwordEncoder" class="cn.com.p2p.security.login.service.CheckPasswordEncoder" />
+		<bean id="loan_notice_list" class="cn.com.p2p.ui.service.LoanNoticeService" />
+		<bean id="category_list" class="cn.com.p2p.ui.control.CategoryListControl" />
+		<bean id="loan_list" class="cn.com.p2p.ui.control.LoanListControl" />
+		<bean id="advertisement_list" class="cn.com.p2p.ui.control.AdvertisementListControl" />
+		<bean id="aboutCategorys" class="cn.com.p2p.ui.service.AboutCategorys" />
+		<bean id="getLoanStatusName" class="cn.com.p2p.ui.control.GetLoanStatusControl"/>
+		<bean id="getLoanInterestManner" class="cn.com.p2p.ui.control.GetLoanInterestMannerControl"/>
+		<bean id="countAgeByIdentity" class="cn.com.p2p.ui.control.CountAgeByIdentity"/>
+		<bean id="getGuaranteeComName" class="cn.com.p2p.ui.control.GetGuaranteeComName"/>
+		<bean id="getSettingValue" class="cn.com.p2p.ui.service.GetSettingMethod"/>
+		<bean id="getHeaderMessage" class="cn.com.p2p.ui.control.HeaderMessageControl"/>
+		<bean id="getEnum" class="cn.com.p2p.framework.web.ui.GetEnumControl"/>
+		
+	<!-- 加载所有省份信息 -->
+	
+	<bean id="freemarkerConfigurer"
+		class="cn.com.p2p.framework.web.freemarker.MyFreeMarkerConfigurer">
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="classic_compatible">true</prop>
+				<prop key="defaultEncoding">UTF-8</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="boolean_format">true,false</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="time_format">HH:mm:ss</prop>
+				<prop key="number_format">0.######</prop>
+				<prop key="whitespace_stripping">true</prop>
+				<prop key="auto_import">/WEB-INF/view/common/layout/taglibs.ftl as taglibs,
+					/WEB-INF/view/common/layout/common_layout.ftl as cl,
+					/WEB-INF/view/common/htmlTag.ftl as h,
+					/WEB-INF/view/common/control/control.ftl as ctl,
+					/WEB-INF/view/common/bizTag/bizTag.ftl as bizTag
+				</prop>
+			</props>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="loan_notice_list" value-ref="loan_notice_list" />
+				<entry key="category_list" value-ref="category_list" />
+				<entry key="loan_list" value-ref="loan_list" />
+				<entry key="advertisement_list" value-ref="advertisement_list" />
+				<entry key="aboutCategorys" value-ref="aboutCategorys" />
+				<entry key="getLoanStatusName" value-ref="getLoanStatusName" />
+				<entry key="getLoanInterestManner" value-ref="getLoanInterestManner" />
+				<entry key="countAgeByIdentity" value-ref="countAgeByIdentity" />
+				<entry key="getGuaranteeComName" value-ref="getGuaranteeComName" />
+				<entry key="getSettingValue" value-ref="getSettingValue" />
+				<entry key="getHeaderMessage" value-ref="getHeaderMessage" />
+				<entry key="getEnum" value-ref="getEnum" />
+			</map>
+		</property>
+	</bean>	
+	
+    <bean class="cn.com.p2p.framework.web.event.SpringInitBeanPostProcessor" />
+    <!-- AOP 异常拦截 -->
+    <bean class="cn.com.p2p.control.exception.DBExceptionAspect"/> 
+    <bean class="cn.com.p2p.control.exception.SysExceptionAspect"/> 
+    <!-- AOP log -->
+    <bean class="cn.com.p2p.control.log.ApplicationLogAspect"/> 
+    <!-- AOP 加载-->
+    <aop:aspectj-autoproxy/>
+</beans> 

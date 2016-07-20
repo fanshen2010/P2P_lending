@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- See http://mybatis.github.io/mybatis-3/configuration.html#settings -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="lazyLoadingEnabled" value="true" />
+        <setting name="aggressiveLazyLoading" value="false" />
+<!--
+        <setting name="defaultExecutorType" value="REUSE" />
+        <setting name="jdbcTypeForNull" value="NULL" />
+        <setting name="proxyFactory" value="JAVASSIST" />
+        <setting name="localCacheScope" value="STATEMENT" />
+-->
+    </settings>
+
+    <typeAliases>
+    	<!-- //TODOBUG 
+        <package name="cn.com.p2p.domain.workflow.criteria" />
+        <package name="cn.com.p2p.domain.workflow.entity" />
+        <package name="cn.com.p2p.domain.workflow.dto" />
+        <package name="cn.com.p2p.domain.workflow.repository" />
+        <package name="cn.com.p2p.domain.workflow.query" />
+        -->
+        <package name="cn.com.p2p.domain.loan.criteria" />
+        <package name="cn.com.p2p.domain.loan.entity" />
+        <package name="cn.com.p2p.domain.loan.dto" />
+        <package name="cn.com.p2p.domain.loan.repository" />
+        <package name="cn.com.p2p.domain.loan.query" />
+        <package name="cn.com.p2p.domain.invest.criteria" />
+        <package name="cn.com.p2p.domain.invest.entity" />
+        <package name="cn.com.p2p.domain.invest.dto" />
+        <package name="cn.com.p2p.domain.invest.repository" />
+        <package name="cn.com.p2p.domain.invest.query" />
+        <package name="cn.com.p2p.domain.system.criteria" />
+        <package name="cn.com.p2p.domain.system.entity" />
+        <package name="cn.com.p2p.domain.system.dto" />
+        <package name="cn.com.p2p.domain.system.repository" />
+        <package name="cn.com.p2p.domain.system.query" />
+        
+        <package name="cn.com.p2p.domain.user.criteria" />
+        <package name="cn.com.p2p.domain.user.entity" />
+        <package name="cn.com.p2p.domain.user.dto" />
+        <package name="cn.com.p2p.domain.user.repository" />
+        <package name="cn.com.p2p.domain.user.query" />     
+        <package name="cn.com.p2p.domain.customer.criteria" />
+        <package name="cn.com.p2p.domain.customer.entity" />
+        <package name="cn.com.p2p.domain.customer.dto" />
+        <package name="cn.com.p2p.domain.customer.repository" />
+        <package name="cn.com.p2p.domain.customer.query" /> 
+        
+        <package name="cn.com.p2p.domain.cms.criteria" />
+        <package name="cn.com.p2p.domain.cms.entity" />
+        <package name="cn.com.p2p.domain.cms.dto" />
+        <package name="cn.com.p2p.domain.cms.repository" />
+        <package name="cn.com.p2p.domain.cms.query" />
+        
+        <package name="cn.com.p2p.domain.message.criteria" />
+        <package name="cn.com.p2p.domain.message.entity" />
+        <package name="cn.com.p2p.domain.message.dto" />
+        <package name="cn.com.p2p.domain.message.repository" />
+        <package name="cn.com.p2p.domain.message.query" /> 
+           
+        <package name="cn.com.p2p.domain.payment.criteria" />
+        <package name="cn.com.p2p.domain.payment.entity" />
+        <package name="cn.com.p2p.domain.payment.dto" />
+        <package name="cn.com.p2p.domain.payment.repository" />
+        <package name="cn.com.p2p.domain.payment.query" />     
+    
+    	<package name="cn.com.p2p.domain.statistics.criteria" />
+        <package name="cn.com.p2p.domain.statistics.entity" />
+        <package name="cn.com.p2p.domain.statistics.dto" />
+        <package name="cn.com.p2p.domain.statistics.repository" />
+        <package name="cn.com.p2p.domain.statistics.query" />
+    
+           
+<!--
+        <package name="xxxxxx.yyyyyy.zzzzzz.infra.mybatis.typehandler" />
+-->
+    </typeAliases>
+
+    <typeHandlers>
+<!--
+        <package name="xxxxxx.yyyyyy.zzzzzz.infra.mybatis.typehandler" />
+-->
+    </typeHandlers>
+	<plugins>
+		<plugin
+			interceptor="cn.com.p2p.framework.aop.pagination.interceptor.PaginationInterceptor">
+			<property name="dialect" value="MySql" />
+			<property name="pageRowCount" value="10" />
+			<property name="sqlPattern" value=".*findPage*.*" />
+		</plugin>
+		<plugin
+			interceptor="cn.com.p2p.framework.aop.update.interceptor.UpdateQueueInterceptor">
+		</plugin>
+	</plugins>
+</configuration>

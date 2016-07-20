@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.invest.query.InvestInformationQuery">
+    <!--融资业务中的投资信息查询  -->
+    <select id="getInvestInformation" parameterType="String" resultType="InvestInformation">
+    <!--目前没有前台用户表 所以 把跟用户表相关的都注释掉了，当表出来的时候改一下表的名字就可以了  -->
+       SELECT
+              I.INVEST_USER_NAME,
+              I.INVESTMENT_TIME,
+              I.INVESTMENT_AMOUNT,
+              I.INVEST_USER_NAME,
+              I.RECEIVABLE_PRINCIPAL,
+              I.RECEIVABLE_INTEREST,
+              I.USER_ID
+       FROM
+              <!--目前没有前台用户表 所以USER表的名字可能会有改变  -->
+           INVEST I<!--, USER U-->        
+       WHERE
+              I.LOAN_CODE = #{loanCode}
+              AND (I.STATUS = '02'  OR I.STATUS='07'  OR I.STATUS='09' OR I.STATUS='14' )
+              <!--AND I.USER_ID = U.ID-->
+       ORDER BY  I.INVESTMENT_TIME DESC
+    </select>
+    
+    <!--根据用户ID获取投资信息（对应前台个人中心收益详情）  //TODOBUG-->
+    <select id="getInvestByUser" parameterType="String" resultType="InvestInformation">
+        SELECT    
+            SUM(INVESTMENT_AMOUNT) AS 'TOTAL_INVESTMENT_AMOUNT',
+            SUM(INVEST_EARNINGS) AS 'TOTAL_INVEST_EARNINGS',       
+            SUM(RECEIVED_INTEREST) AS 'TOTAL_RECEIVED_INTEREST',    
+            SUM(RECEIVABLE_INTEREST) AS 'TOTAL_RECEIVABLE_INTEREST',    
+            SUM(RECEIVED_PUNITIVE) AS 'TOTAL_RECEIVED_PUNITIVE',    
+            SUM(RECEIVABLE_PUNITIVE) AS 'TOTAL_RECEIVABLE_PUNITIVE',
+            l1.TOTAL_TO_INVEST_AMOUNT,    
+            l1.TOTAL_TO_INVEST_COUNT,    
+            l2.TOTAL_INVESTING_AMOUNT,    
+            l2.TOTAL_INVESTING_COUNT,    
+            l3.TOTAL_INVESTED_AMOUNT,       
+            l4.NEXT_PAYMENT_AMOUNT,    
+            l5.NEXT_PAYMENT_DATE         
+        FROM    
+            INVEST,
+            (SELECT 
+                SUM(INVESTMENT_AMOUNT) AS 'TOTAL_TO_INVEST_AMOUNT', COUNT(*) AS 'TOTAL_TO_INVEST_COUNT' 
+            FROM INVEST 
+            WHERE STATUS IN('02','14') AND USER_ID = #{userId}
+            ) l1,
+            
+            (SELECT 
+                SUM(INVESTMENT_AMOUNT) AS 'TOTAL_INVESTING_AMOUNT', COUNT(*) AS 'TOTAL_INVESTING_COUNT' 
+            FROM INVEST 
+            WHERE STATUS ='07' AND USER_ID = #{userId}
+            ) l2,
+            
+            (SELECT 
+                SUM(INVESTMENT_AMOUNT) AS 'TOTAL_INVESTED_AMOUNT'  
+            FROM INVEST  
+            WHERE STATUS ='09' AND USER_ID = #{userId}
+            ) l3,
+            
+            (SELECT 
+            	SUM(NEXT_PAYMENT_AMOUNT) AS 'NEXT_PAYMENT_AMOUNT'  
+            	FROM INVEST   
+            	WHERE STATUS ='07' 
+            		AND USER_ID = #{userId} 
+            		AND NEXT_PAYMENT_DATE = (SELECT MIN(NEXT_PAYMENT_DATE) FROM INVEST WHERE STATUS ='07' AND USER_ID =#{userId})
+            ) l4,
+            
+            (SELECT 
+            	MIN(NEXT_PAYMENT_DATE) AS 'NEXT_PAYMENT_DATE'
+            	FROM INVEST 
+            	WHERE STATUS ='07' 
+            		AND USER_ID =#{userId}
+            ) l5
+        WHERE
+            USER_ID = #{userId}
+            AND STATUS IN('02','07','09','14')
+        GROUP BY 
+        	l1.TOTAL_TO_INVEST_AMOUNT,    
+            l1.TOTAL_TO_INVEST_COUNT,    
+            l2.TOTAL_INVESTING_AMOUNT,    
+            l2.TOTAL_INVESTING_COUNT,    
+            l3.TOTAL_INVESTED_AMOUNT,       
+            l4.NEXT_PAYMENT_AMOUNT,    
+            l5.NEXT_PAYMENT_DATE
+    </select>
+    
+    <!--根据用户ID获取投资月收益统计信息（对应前台个人中心计划收益线条）   计划收益不加罚息-->
+    <select id="getPlanInvestByUser" resultType="InvestInformation">
+        SELECT 
+            SUM(ID.RECEIVABLE_INTEREST) AS 'PLAN_EARNINGS',
+            DATE_FORMAT(ID.RECIEVE_PLAN_DATE,'%m') AS 'STATISTIC_MONTH'
+        FROM 
+            INVEST_DETAIL ID,
+            INVEST I
+        WHERE
+            ID.INVEST_CODE=I.INVEST_CODE 
+            AND ID.RECIEVE_PLAN_DATE IS NOT NULL
+            AND ID.RECIEVE_PLAN_DATE &lt;= #{endTime}
+            AND ID.RECIEVE_PLAN_DATE &gt;= #{startTime}
+            AND I.USER_ID = #{userId}
+        GROUP BY 
+            DATE_FORMAT(ID.RECIEVE_PLAN_DATE,'%Y%m')
+        ORDER BY 
+            DATE_FORMAT(ID.RECIEVE_PLAN_DATE,'%Y%m')
+    </select>
+    
+    <!--根据用户ID获取投资月收益统计信息（对应前台个人中心实际收益线条）   实际收益加罚息-->
+    <select id="getActualInvestByUser" resultType="InvestInformation">
+        SELECT 
+            SUM(ID.RECEIVED_INTEREST+ID.PUNITIVE_INTEREST) AS 'ACTUAL_EARNINGS',
+            DATE_FORMAT(ID.RECIEVE_REAL_DATE,'%m') AS 'STATISTIC_MONTH'
+        FROM 
+            INVEST_DETAIL ID,
+            INVEST I
+        WHERE 
+            ID.INVEST_CODE=I.INVEST_CODE
+            AND    ID.RECIEVE_REAL_DATE IS NOT NULL
+            AND ID.RECIEVE_REAL_DATE &lt;= #{endTime}
+            AND ID.RECIEVE_REAL_DATE &gt;= #{startTime}
+            AND I.USER_ID = #{userId}
+        GROUP BY 
+            DATE_FORMAT(ID.RECIEVE_REAL_DATE,'%Y%m')
+        ORDER BY 
+            DATE_FORMAT(ID.RECIEVE_REAL_DATE,'%Y%m')
+    </select>
+</mapper>

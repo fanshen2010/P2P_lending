@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.repository.PfmUserRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        USER_NAME,
+        REAL_NAME,
+        CONTACT_PHONE,
+        EMAIL_ADDRESS,
+        IDENTITY,
+        CURRENT_LOGIN_AT,
+        CURRENT_LOGIN_IP,
+        LOCK_FLAG,
+        FAILURE_LOGIN_ACCOUNT,
+        LOCK_DATE,
+        VALID_FLAG,
+        PASSWORD,
+        PASSWORD_SALT,
+        PASSWORD_OPERATION,
+        PASSWORD_OPERATION_SALT,
+        POST_CD,
+        DEPART_CD,
+        TENANT_CD,
+        ACTIVE,
+        LAST_LOGIN_AT,
+        LAST_LOGIN_IP,
+        LAST_QUEST_AT,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="PfmUser">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_USER
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findPfmUserByuserName方法 -->
+    <select id="findPfmUserByUserName" parameterType="string" resultType="PfmUser">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            PFM_USER
+        WHERE
+            USER_NAME = #{userName}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="PfmUser">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_USER
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="PfmUserCriteria" resultType="PfmUser">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PFM_USER
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="PfmUser">
+        INSERT INTO
+            PFM_USER
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{userName},
+          #{realName},
+          #{contactPhone},
+          #{emailAddress},
+          #{identity},
+          #{currentLoginAt},
+          #{currentLoginIp},
+          #{lockFlag},
+          #{failureLoginAccount},
+          #{lockDate},
+          #{validFlag},
+          #{password},
+          #{passwordSalt},
+          #{passwordOperation},
+          #{passwordOperationSalt},
+          #{postCd},
+          #{departCd},
+          #{tenantCd},
+          #{active},
+          #{lastLoginAt},
+          #{lastLoginIp},
+          #{lastQuestAt},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="PfmUser">
+        UPDATE
+            PFM_USER
+        <set>
+            <if test="userName != null">
+                USER_NAME = #{userName},
+            </if>
+            <if test="realName != null">
+                REAL_NAME = #{realName},
+            </if>
+            <if test="contactPhone != null">
+                CONTACT_PHONE = #{contactPhone},
+            </if>
+            <if test="emailAddress != null">
+                EMAIL_ADDRESS = #{emailAddress},
+            </if>
+            <if test="identity != null">
+                IDENTITY = #{identity},
+            </if>
+            <if test="currentLoginAt != null">
+                CURRENT_LOGIN_AT = #{currentLoginAt},
+            </if>
+            <if test="currentLoginIp != null">
+                CURRENT_LOGIN_IP = #{currentLoginIp},
+            </if>
+            <if test="lockFlag != null">
+                LOCK_FLAG = #{lockFlag},
+            </if>
+            <if test="failureLoginAccount != null">
+                FAILURE_LOGIN_ACCOUNT = #{failureLoginAccount},
+            </if>
+            <if test="lockDate != null">
+                LOCK_DATE = #{lockDate},
+            </if>
+            <if test="validFlag != null">
+                VALID_FLAG = #{validFlag},
+            </if>
+            <if test="password != null">
+                PASSWORD = #{password},
+            </if>
+            <if test="passwordSalt != null">
+                PASSWORD_SALT = #{passwordSalt},
+            </if>
+            <if test="passwordOperation != null">
+                PASSWORD_OPERATION = #{passwordOperation},
+            </if>
+            <if test="passwordOperationSalt != null">
+                PASSWORD_OPERATION_SALT = #{passwordOperationSalt},
+            </if>
+            <if test="postCd != null">
+                POST_CD = #{postCd},
+            </if>
+            <if test="departCd != null">
+                DEPART_CD = #{departCd},
+            </if>
+            <if test="tenantCd != null">
+                TENANT_CD = #{tenantCd},
+            </if>
+            <if test="active != null">
+                ACTIVE = #{active},
+            </if>
+            <if test="lastLoginAt != null">
+                LAST_LOGIN_AT = #{lastLoginAt},
+            </if>
+            <if test="lastLoginIp != null">
+                LAST_LOGIN_IP = #{lastLoginIp},
+            </if>
+            <if test="lastQuestAt != null">
+                LAST_QUEST_AT = #{lastQuestAt},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="PfmUser">
+        UPDATE
+            PFM_USER
+        SET
+            USER_NAME = #{userName},
+            REAL_NAME = #{realName},
+            CONTACT_PHONE = #{contactPhone},
+            EMAIL_ADDRESS = #{emailAddress},
+            IDENTITY = #{identity},
+            CURRENT_LOGIN_AT = #{currentLoginAt},
+            CURRENT_LOGIN_IP = #{currentLoginIp},
+            LOCK_FLAG = #{lockFlag},
+            FAILURE_LOGIN_ACCOUNT = #{failureLoginAccount},
+            LOCK_DATE = #{lockDate},
+            VALID_FLAG = #{validFlag},
+            PASSWORD = #{password},
+            PASSWORD_SALT = #{passwordSalt},
+            PASSWORD_OPERATION = #{passwordOperation},
+            PASSWORD_OPERATION_SALT = #{passwordOperationSalt},
+            POST_CD = #{postCd},
+            DEPART_CD = #{departCd},
+            TENANT_CD = #{tenantCd},
+            ACTIVE = #{active},
+            LAST_LOGIN_AT = #{lastLoginAt},
+            LAST_LOGIN_IP = #{lastLoginIp},
+            LAST_QUEST_AT = #{lastQuestAt},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            PFM_USER
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PFM_USER
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

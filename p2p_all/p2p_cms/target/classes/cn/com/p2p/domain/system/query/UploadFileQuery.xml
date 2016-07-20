@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.system.query.UploadFileQuery">
+
+    <!--企业融资信息的证照查询 -->
+    <select id="findUploadFileByIds" parameterType="List" resultType="UploadFile">
+        SELECT 
+        	ID,
+        	FILE_NAME,
+        	FILE_URL_ORIGINAL,
+        	FILE_URL_BIG,
+        	FILE_URL_THUMB,
+        	FILE_TYPE
+        FROM
+            UPLOAD_FILE
+        WHERE
+           ID in <foreach collection="plstId" item="item" index="index" open="(" separator="," close=")">#{item}</foreach>
+    </select>
+    
+</mapper>

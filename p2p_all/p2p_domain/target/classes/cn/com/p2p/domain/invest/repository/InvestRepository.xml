@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.invest.repository.InvestRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        INVEST_CODE,
+        LOAN_NAME,
+        INVESTMENT_AMOUNT,
+        INVEST_LIMIT,
+        INVEST_TIME_LIMIT_UNIT,
+        INVESTMENT_TIME,
+        INTEREST_DATE,
+        END_DATE,
+        INVEST_INTERST_RATE,
+        INVEST_INTERST,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_INTEREST,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_INTEREST,
+        RECEIVED_PUNITIVE,
+        RECEIVABLE_PUNITIVE,
+        PAYMENT_START_DATE,
+        NEXT_PAYMENT_DATE,
+        NEXT_PAYMENT_AMOUNT,
+        NEXT_PAYMENT_NO,
+        PAYMENT_TOTAL_NUM,
+        STATUS,
+        INVEST_TYPE,
+        SETTLEMENT_TYPE,
+        CICC_TRADING_JSON,
+        INVEST_USER_NAME,
+        USER_ID,
+        LOAN_CODE,
+        DEBT_CODE,
+        INVEST_EARNINGS,
+        RECEIVED_ACCOUNT,
+        RECEIVED_ACCOUNT_NAME,
+        SERIAL_NUMBER,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="Invest">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            INVEST
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="Invest">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            INVEST
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="InvestCriteria" resultType="Invest">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            INVEST
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="Invest">
+        INSERT INTO
+            INVEST
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{investCode},
+          #{loanName},
+          #{investmentAmount},
+          #{investLimit},
+          #{investTimeLimitUnit},
+          #{investmentTime},
+          #{interestDate},
+          #{endDate},
+          #{investInterstRate},
+          #{investInterst},
+          #{receivedPrincipal},
+          #{receivedInterest},
+          #{receivablePrincipal},
+          #{receivableInterest},
+          #{receivedPunitive},
+          #{receivablePunitive},
+          #{paymentStartDate},
+          #{nextPaymentDate},
+          #{nextPaymentAmount},
+          #{nextPaymentNo},
+          #{paymentTotalNum},
+          #{status},
+          #{investType},
+          #{settlementType},
+          #{ciccTradingJson},
+          #{investUserName},
+          #{userId},
+          #{loanCode},
+          #{debtCode},
+          #{investEarnings},
+          #{receivedAccount},
+          #{receivedAccountName},
+          #{serialNumber},
+          #{tenantId},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="Invest">
+        UPDATE
+            INVEST
+        <set>
+            <if test="investCode != null">
+                INVEST_CODE = #{investCode},
+            </if>
+            <if test="loanName != null">
+                LOAN_NAME = #{loanName},
+            </if>
+            <if test="investmentAmount != null">
+                INVESTMENT_AMOUNT = #{investmentAmount},
+            </if>
+            <if test="investLimit != null">
+                INVEST_LIMIT = #{investLimit},
+            </if>
+            <if test="investTimeLimitUnit != null">
+                INVEST_TIME_LIMIT_UNIT = #{investTimeLimitUnit},
+            </if>
+            <if test="investmentTime != null">
+                INVESTMENT_TIME = #{investmentTime},
+            </if>
+            <if test="interestDate != null">
+                INTEREST_DATE = #{interestDate},
+            </if>
+            <if test="endDate != null">
+                END_DATE = #{endDate},
+            </if>
+            <if test="investInterstRate != null">
+                INVEST_INTERST_RATE = #{investInterstRate},
+            </if>
+            <if test="investInterst != null">
+                INVEST_INTERST = #{investInterst},
+            </if>
+            <if test="receivedPrincipal != null">
+                RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            </if>
+            <if test="receivedInterest != null">
+                RECEIVED_INTEREST = #{receivedInterest},
+            </if>
+            <if test="receivablePrincipal != null">
+                RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            </if>
+            <if test="receivableInterest != null">
+                RECEIVABLE_INTEREST = #{receivableInterest},
+            </if>
+            <if test="receivedPunitive != null">
+                RECEIVED_PUNITIVE = #{receivedPunitive},
+            </if>
+            <if test="receivablePunitive != null">
+                RECEIVABLE_PUNITIVE = #{receivablePunitive},
+            </if>
+            <if test="paymentStartDate != null">
+                PAYMENT_START_DATE = #{paymentStartDate},
+            </if>
+            <if test="nextPaymentDate != null">
+                NEXT_PAYMENT_DATE = #{nextPaymentDate},
+            </if>
+            <if test="nextPaymentAmount != null">
+                NEXT_PAYMENT_AMOUNT = #{nextPaymentAmount},
+            </if>
+            <if test="nextPaymentNo != null">
+                NEXT_PAYMENT_NO = #{nextPaymentNo},
+            </if>
+            <if test="paymentTotalNum != null">
+                PAYMENT_TOTAL_NUM = #{paymentTotalNum},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="investType != null">
+                INVEST_TYPE = #{investType},
+            </if>
+            <if test="settlementType != null">
+                SETTLEMENT_TYPE = #{settlementType},
+            </if>
+            <if test="ciccTradingJson != null">
+                CICC_TRADING_JSON = #{ciccTradingJson},
+            </if>
+            <if test="investUserName != null">
+                INVEST_USER_NAME = #{investUserName},
+            </if>
+            <if test="userId != null">
+                USER_ID = #{userId},
+            </if>
+            <if test="loanCode != null">
+                LOAN_CODE = #{loanCode},
+            </if>
+            <if test="debtCode != null">
+                DEBT_CODE = #{debtCode},
+            </if>
+            <if test="investEarnings != null">
+                INVEST_EARNINGS = #{investEarnings},
+            </if>
+            <if test="receivedAccount != null">
+                RECEIVED_ACCOUNT = #{receivedAccount},
+            </if>
+            <if test="receivedAccountName != null">
+                RECEIVED_ACCOUNT_NAME = #{receivedAccountName},
+            </if>
+            <if test="serialNumber != null">
+                SERIAL_NUMBER = #{serialNumber},
+            </if>
+            <if test="tenantId != null">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="Invest">
+        UPDATE
+            INVEST
+        SET
+            INVEST_CODE = #{investCode},
+            LOAN_NAME = #{loanName},
+            INVESTMENT_AMOUNT = #{investmentAmount},
+            INVEST_LIMIT = #{investLimit},
+            INVEST_TIME_LIMIT_UNIT = #{investTimeLimitUnit},
+            INVESTMENT_TIME = #{investmentTime},
+            INTEREST_DATE = #{interestDate},
+            END_DATE = #{endDate},
+            INVEST_INTERST_RATE = #{investInterstRate},
+            INVEST_INTERST = #{investInterst},
+            RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            RECEIVED_INTEREST = #{receivedInterest},
+            RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            RECEIVABLE_INTEREST = #{receivableInterest},
+            RECEIVED_PUNITIVE = #{receivedPunitive},
+            RECEIVABLE_PUNITIVE = #{receivablePunitive},
+            PAYMENT_START_DATE = #{paymentStartDate},
+            NEXT_PAYMENT_DATE = #{nextPaymentDate},
+            NEXT_PAYMENT_AMOUNT = #{nextPaymentAmount},
+            NEXT_PAYMENT_NO = #{nextPaymentNo},
+            PAYMENT_TOTAL_NUM = #{paymentTotalNum},
+            STATUS = #{status},
+            INVEST_TYPE = #{investType},
+            SETTLEMENT_TYPE = #{settlementType},
+            CICC_TRADING_JSON = #{ciccTradingJson},
+            INVEST_USER_NAME = #{investUserName},
+            USER_ID = #{userId},
+            LOAN_CODE = #{loanCode},
+            DEBT_CODE = #{debtCode},
+            INVEST_EARNINGS = #{investEarnings},
+            RECEIVED_ACCOUNT = #{receivedAccount},
+            RECEIVED_ACCOUNT_NAME = #{receivedAccountName},
+            SERIAL_NUMBER = #{serialNumber},
+            TENANT_ID = #{tenantId},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            INVEST
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            INVEST
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

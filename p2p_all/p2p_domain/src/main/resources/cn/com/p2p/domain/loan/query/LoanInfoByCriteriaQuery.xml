@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanInfoByCriteriaQuery">
+    
+    
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        LOAN_CODE,
+        LOAN_NAME,
+        PRODUCT_CODE,
+        CUSTOM_CODE,
+        CUSTOM_NAME,
+        GUARANTEE_COM_CODE,
+        LOAN_STATUS,
+        LOAN_TYPE,
+        LOAN_AMOUNT,
+        LOAN_INTEREST_MANNER,
+        LOAN_INTEREST_RATES,
+        LOAN_TIME_LIMIT_DAYS,
+        LOAN_TIME_LIMIT,
+        LOAN_TIME_LIMIT_UNIT,
+        LOAN_START_SHARE,
+        LOAN_UNIT_PRICE,
+        LOAN_TOTAL_SHARE,
+        LOAN_POST_TIME,
+        LOAN_END_TIME,
+        LOAN_INTEREST,
+        LOAN_MAX_INVEST,
+        SERIAL_NUMBER,
+        PLATFORM_RATE,
+        PLATFORM_FEE,
+        PLAT_SERIAL_NUMBER,
+        GUARANTEE_RATE,
+        GUARANTEE_FEE,
+        VOUCH_SERIAL_NUMBER,
+        DEPOSIT_RATE,
+        CURRENT_INVESTED_SHARE,
+        CURRENT_SURPLUS_SHARE,
+        ACTUAL_AMOUNT,
+        AMOUNT,
+        LOAN_TIME,
+        CARRY_INTEREST_FROM,
+        CARRY_INTEREST_TO,
+        REPAY_TYPE,
+        TOTAL_REPAY_NUMBER,
+        RECEIVABLE_REPAY_NUMBER,
+        RECEIVABLE_REPAY_STATUS,
+        RECEIVABLE_NEXT_DATE,
+        RECEIVABLE_SUM,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_INTEREST,
+        RECEIVABLE_DELAYING,
+        RECEIVABLE_OVERDUE,
+        RECEIVED_SUM,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_INTEREST,
+        RECEIVED_DELAYING,
+        RECEIVED_OVERDUE,
+        APPLY_USER_ID,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        RECEIVABLE_NEXT_SUM,
+        VERSION
+    </sql>
+    
+     <!-- 根据融资状态、当前查询条件 查询融资表数据  对应 findPageLoanList方法 -->
+    <select id="findPageLoanList" parameterType="LoanCommSelCriteria" resultType="Loan">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            LOAN
+        <where>
+        <!-- 不为空则添加融资产品条件 -->
+        <if test="loanParameter.productCode!=null and loanParameter.productCode!=''">
+            AND PRODUCT_CODE=#{loanParameter.productCode}
+        </if>
+        <!-- 不为空则添加融资项目名称条件 -->
+        <if test="loanParameter.loanName!=null and loanParameter.loanName!=''">
+            AND LOAN_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.loanName}),'%')
+        </if>
+        <!-- 不为空则添加客户名称条件 -->
+        <if test="loanParameter.customName!=null and loanParameter.customName!=''">
+            AND CUSTOM_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.customName}),'%')
+        </if>
+        <!-- 不为空则添加融资金额最小值条件 -->
+        <if test="loanParameter.loanAmountMin!=null">
+            AND LOAN_AMOUNT &gt;=#{loanParameter.loanAmountMin}
+        </if>
+        <!-- 不为空则添加融资金额最大值条件 -->
+        <if test="loanParameter.loanAmountMax!=null">
+            AND LOAN_AMOUNT &lt;= #{loanParameter.loanAmountMax}
+        </if>
+        <!-- 不为空则添加融资申请起最小日期条件 -->
+        <if test="loanParameter.loanPostTime!=null and loanPostTime!=''">
+            AND LOAN_POST_TIME &gt;=#{loanParameter.loanPostTime}
+
+        </if>
+        <!-- 不为空则添加融资申请最大日期条件 -->
+        <if test="loanParameter.loanEndTime!=null and loanParameter.loanEndTime!=''">
+            AND LOAN_END_TIME &lt;= #{loanParameter.loanEndTime}
+        </if>
+        <!-- 不为空则添加最小融资期限条件 -->
+        <if test="loanParameter.loanTimeLimitMin!=null and loanParameter.loanTimeLimitMin!=''">
+            <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+            <if test="loanParameter.loanTimeLimitUnit=='0'">
+                AND LOAN_TIME_LIMIT_DAYS &gt;=#{loanParameter.loanTimeLimitMin}
+            </if>
+            <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+            <if test="loanParameter.loanTimeLimitUnit=='1'">
+                AND LOAN_TIME_LIMIT &gt;=#{loanParameter.loanTimeLimitMin}
+            </if>
+        </if>
+        <!-- 不为空则添加最大融资期限条件 -->
+        <if test="loanParameter.loanTimeLimitMax!=null and loanParameter.loanTimeLimitMax!=''">
+            <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+            <if test="loanParameter.loanTimeLimitUnit='0'">
+                AND LOAN_TIME_LIMIT_DAYS &lt;=#{loanParameter.loanTimeLimitMax}
+            </if>
+            <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+            <if test="loanParameter.loanTimeLimitUnit=='1'">
+                AND LOAN_TIME_LIMIT &lt;=#{loanParameter.loanTimeLimitMax}
+            </if>
+        </if>
+        <!-- 不为空添加最小还款日期条件 -->
+        <if test="loanParameter.repayTimeMin!=null and loanParameter.repayTimeMin!=''">
+            AND RECEIVABLE_NEXT_DATE &gt;=#{loanParameter.repayTimeMin}
+        </if>
+        <!-- 不为空添加最大还款日期条件 -->
+        <if test="loanParameter.repayTimeMax!=null and loanParameter.repayTimeMax!=''">
+            AND RECEIVABLE_NEXT_DATE &lt;=#{loanParameter.repayTimeMax}
+        </if>
+         <!-- @author  @date 2015-09-20 *******  begin  **********  -->
+            <!-- 融资状态的集合 -->
+             <if test="loanParameter.status!=null">
+              AND LOAN_STATUS IN
+                <foreach collection="loanParameter.status" index="index"  open="(" separator="," close=")">
+                  #{loanParameter.status[${index}]}     
+                </foreach>   
+            </if>
+            <!-- 不为空则添加融资产品条件 -->
+            <if test="loanParameter.loginUserId!=null and loanParameter.loginUserId!=''">
+                AND APPLY_USER_ID = #{loanParameter.loginUserId}
+            </if>
+            <if test="loanParameter.loanCode!=null and loanParameter.loanCode!=''">
+                AND LOAN_CODE LIKE CONCAT(CONCAT('%',#{loanParameter.loanCode}),'%')
+            </if>
+            <!-- 拼装【最小年化收益率】，大于等于 -->
+            <if test="null != loanParameter.loanInterestRatesMin">
+                 AND LOAN_INTEREST_RATES &gt;= #{loanParameter.loanInterestRatesMin}     
+            </if>
+            <!-- 拼装【最大年化收益率】，小于等于 -->
+            <if test="null != loanParameter.loanInterestRatesMax">
+                 AND LOAN_INTEREST_RATES &lt;= #{loanParameter.loanInterestRatesMax}     
+            </if>
+            <!-- 拼装【当期还款状态】，等于 -->
+            <if test="null != loanParameter.ReceivableRepayStatus">
+                 AND RECEIVABLE_REPAY_STATUS = #{loanParameter.ReceivableRepayStatus}     
+            </if>
+        <!-- @author  @date 2015-09-20 *******  end  **********  -->
+        
+        <!-- @author  @date 2015-10-11 *******  begin  **********  -->
+        <!-- 添加担保公司查询条件 -->
+         <if test="loanParameter.guaranteeComCode!=null and loanParameter.guaranteeComCode!=''">
+         	AND GUARANTEE_COM_CODE = #{loanParameter.guaranteeComCode}
+        </if>
+           
+        <!-- @author  @date 2015-10-11 *******  end  **********  -->
+        </where>
+            ORDER BY 
+                UPDATE_TIME DESC
+    </select>
+    
+     <!-- 根据融资状态、当前查询条件 查询融资表数据  对应 findLoanList方法 -->
+    <select id="findLoanList" parameterType="LoanCommSelCriteria" resultType="Loan">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            LOAN
+        <where>
+        <!-- 不为空则添加融资产品条件 -->
+        <if test="loanParameter.productCode!=null and loanParameter.productCode!=''">
+            AND PRODUCT_CODE=#{loanParameter.productCode}
+        </if>
+        <!-- 不为空则添加融资项目名称条件 -->
+        <if test="loanParameter.loanName!=null and loanParameter.loanName!=''">
+            AND LOAN_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.loanName}),'%')
+        </if>
+        <!-- 不为空则添加客户名称条件 -->
+        <if test="loanParameter.customName!=null and loanParameter.customName!=''">
+            AND CUSTOM_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.customName}),'%')
+        </if>
+        <!-- 不为空则添加融资金额最小值条件 -->
+        <if test="loanParameter.loanAmountMin!=null">
+            AND LOAN_AMOUNT &gt;=#{loanParameter.loanAmountMin}
+        </if>
+        <!-- 不为空则添加融资金额最大值条件 -->
+        <if test="loanParameter.loanAmountMax!=null">
+            AND LOAN_AMOUNT &lt;= #{loanParameter.loanAmountMax}
+        </if>
+        <!-- 不为空则添加融资申请起最小日期条件 -->
+        <if test="loanParameter.loanPostTime!=null and loanPostTime!=''">
+            AND LOAN_POST_TIME &gt;=#{loanParameter.loanPostTime}
+
+        </if>
+        <!-- 不为空则添加融资申请最大日期条件 -->
+        <if test="loanParameter.loanEndTime!=null and loanParameter.loanEndTime!=''">
+            AND LOAN_END_TIME &lt;= #{loanParameter.loanEndTime}
+        </if>
+        <!-- 不为空则添加最小融资期限条件 -->
+        <if test="loanParameter.loanTimeLimitMin!=null and loanParameter.loanTimeLimitMin!=''">
+            <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+            <if test="loanParameter.loanTimeLimitUnit=='0'">
+                AND LOAN_TIME_LIMIT_DAYS &gt;=#{loanParameter.loanTimeLimitMin}
+            </if>
+            <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+            <if test="loanParameter.loanTimeLimitUnit=='1'">
+                AND LOAN_TIME_LIMIT &gt;=#{loanParameter.loanTimeLimitMin}
+            </if>
+        </if>
+        <!-- 不为空则添加最大融资期限条件 -->
+        <if test="loanParameter.loanTimeLimitMax!=null and loanParameter.loanTimeLimitMax!=''">
+            <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+            <if test="loanParameter.loanTimeLimitUnit='0'">
+                AND LOAN_TIME_LIMIT_DAYS &lt;=#{loanParameter.loanTimeLimitMax}
+            </if>
+            <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+            <if test="loanParameter.loanTimeLimitUnit=='1'">
+                AND LOAN_TIME_LIMIT &lt;=#{loanParameter.loanTimeLimitMax}
+            </if>
+        </if>
+        <!-- 不为空添加最小还款日期条件 -->
+        <if test="loanParameter.repayTimeMin!=null and loanParameter.repayTimeMin!=''">
+            AND RECEIVABLE_NEXT_DATE &gt;=#{loanParameter.repayTimeMin}
+        </if>
+        <!-- 不为空添加最大还款日期条件 -->
+        <if test="loanParameter.repayTimeMax!=null and loanParameter.repayTimeMax!=''">
+            AND RECEIVABLE_NEXT_DATE &lt;=#{loanParameter.repayTimeMax}
+        </if>
+            <!-- 融资状态的集合 -->
+             <if test="loanParameter.status!=null">
+              AND LOAN_STATUS IN
+                <foreach collection="loanParameter.status" index="index"  open="(" separator="," close=")">
+                  #{loanParameter.status[${index}]}     
+                </foreach>   
+            </if>
+            <!-- 不为空则添加融资产品条件 -->
+            <if test="loanParameter.loginUserId!=null and loanParameter.loginUserId!=''">
+                AND APPLY_USER_ID = #{loanParameter.loginUserId}
+            </if>
+            <if test="loanParameter.loanCode!=null and loanParameter.loanCode!=''">
+                AND LOAN_CODE LIKE CONCAT(CONCAT('%',#{loanParameter.loanCode}),'%')
+            </if>
+            <!-- 拼装【最小年化收益率】，大于等于 -->
+            <if test="null != loanParameter.loanInterestRatesMin">
+                 AND LOAN_INTEREST_RATES &gt;= #{loanParameter.loanInterestRatesMin}     
+            </if>
+            <!-- 拼装【最大年化收益率】，小于等于 -->
+            <if test="null != loanParameter.loanInterestRatesMax">
+                 AND LOAN_INTEREST_RATES &lt;= #{loanParameter.loanInterestRatesMax}     
+            </if>
+            <!-- 拼装【当期还款状态】，等于 -->
+            <if test="null != loanParameter.ReceivableRepayStatus">
+                 AND RECEIVABLE_REPAY_STATUS = #{loanParameter.ReceivableRepayStatus}     
+            </if>
+         <!-- 添加担保公司查询条件 -->
+         <if test="loanParameter.guaranteeComCode!=null and loanParameter.guaranteeComCode!=''">
+         	AND GUARANTEE_COM_CODE = #{loanParameter.guaranteeComCode}
+        </if>
+        <!-- 添加下次还款日查询条件 -->
+         <if test="loanParameter.receivableNextDateYMD!=null and loanParameter.receivableNextDateYMD!=''">
+         	AND DATE_FORMAT(RECEIVABLE_NEXT_DATE,'%Y%m%d') = #{loanParameter.receivableNextDateYMD}
+        </if>
+        <!-- 添加满额,超募，到期未满查询条件 -->
+        <if test="loanParameter.onlineStatus!=null and loanParameter.onlineStatus!=''">
+         	<!-- 判断融资满额 -->
+            <if test="loanParameter.onlineStatus=='1'.toString()">
+                AND CURRENT_SURPLUS_SHARE = 0
+            </if>
+            <!-- 判断融资超募 -->
+            <if test="loanParameter.onlineStatus=='2'.toString()">
+                AND CURRENT_SURPLUS_SHARE &lt; 0
+            </if>
+            <!-- 判断融资到期未满 -->
+            <if test="loanParameter.onlineStatus=='3'.toString()">
+                AND CURRENT_SURPLUS_SHARE &gt; 0
+            </if>
+        </if>
+        </where>
+            ORDER BY 
+                UPDATE_TIME DESC
+    </select>
+    
+    <!-- 通过页面的条件，获取前台项目投资列表 对应 findInvestObjectList方法 -->
+    <select id="findPageInvestObjectList" parameterType="LoanCommSelCriteria"
+        resultType="Loan">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+       		 LOAN
+        <where>
+            <!-- 不为空则添加融资产品条件 -->
+            <if test="criteria.productCode!=null and criteria.productCode!=''">
+                AND PRODUCT_CODE=#{criteria.productCode}
+            </if>
+            <!-- 不为空则添加融资金额最小值条件 -->
+            <if test="criteria.loanAmountMin!=null">
+                AND LOAN_AMOUNT &gt;=#{criteria.loanAmountMin}
+            </if>
+            <!-- 不为空则添加最小融资期限条件 -->
+            <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+            <if test=" criteria.loanTimeLimitMin !=null and criteria.loanTimeLimitUnit=='0'.toString()">
+                    AND LOAN_TIME_LIMIT_DAYS &gt;=#{criteria.loanTimeLimitMin}
+            </if>
+            <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+             <if test="criteria.loanTimeLimitMin !=null and criteria.loanTimeLimitUnit=='1'.toString() ">
+                 AND LOAN_TIME_LIMIT &gt;=#{criteria.loanTimeLimitMin}
+             </if>
+            <!-- 不为空则添加最大融资期限条件 -->
+             <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+             <if test="criteria.loanTimeLimitMax !=null and criteria.loanTimeLimitUnit=='0'.toString() ">
+                 AND LOAN_TIME_LIMIT_DAYS &lt;=#{criteria.loanTimeLimitMax}
+             </if>
+             <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+             <if test="criteria.loanTimeLimitMax !=null and criteria.loanTimeLimitUnit=='1'.toString() ">
+                 AND LOAN_TIME_LIMIT &lt;=#{criteria.loanTimeLimitMax}
+             </if>
+            <!-- 还款方式 -->
+            <if test="criteria.loanInterestManner!=null">
+            	AND LOAN_INTEREST_MANNER =#{criteria.loanInterestManner}
+            </if>
+            <!-- 融资状态的集合 -->
+            <if test="criteria.status!=null">
+                AND LOAN_STATUS IN
+                <foreach collection="criteria.status" index="index" open="("
+                    separator="," close=")">
+                    #{criteria.status[${index}]}
+                </foreach>
+            </if>
+             <!-- 添加担保公司查询条件 -->
+	        <if test="criteria.guaranteeComCode!=null and criteria.guaranteeComCode!=''">
+	         	AND GUARANTEE_COM_CODE = #{criteria.guaranteeComCode}
+	        </if>
+            AND LOAN_POST_TIME &lt; #{criteria.loanPostTime}
+        </where>
+        ORDER BY
+        CASE WHEN LOAN_END_TIME &gt; #{criteria.loanPostTime} AND
+        CURRENT_SURPLUS_SHARE > 0 THEN LOAN_POST_TIME END DESC ,
+        CASE WHEN
+        LOAN_END_TIME &gt; #{criteria.loanPostTime} AND CURRENT_SURPLUS_SHARE
+        &lt; 0 THEN LOAN_POST_TIME END DESC ,
+        CASE WHEN LOAN_END_TIME &lt; #{criteria.loanPostTime} THEN LOAN_POST_TIME
+        END DESC ,
+        LOAN_POST_TIME DESC
+
+    </select>
+    
+    <!-- 通过页面的条件，获取前台项目投资列表 对应 findInvestObjectList方法 -->
+    <select id="findInvestObjectList" parameterType="LoanCommSelCriteria"
+        resultType="Loan">
+        SELECT
+            <include refid="base_column" />
+         FROM 
+        LOAN
+        <where>
+            <!-- 不为空则添加融资产品条件 -->
+            <if test="criteria.productCode!=null and criteria.productCode!=''">
+                AND PRODUCT_CODE=#{criteria.productCode}
+            </if>
+            <!-- 不为空则添加融资金额最小值条件 -->
+            <if test="criteria.loanAmountMin!=null">
+                AND LOAN_AMOUNT &gt;=#{criteria.loanAmountMin}
+            </if>
+            <!-- 不为空则添加最小融资期限条件 -->
+            <if
+                test="criteria.loanTimeLimitMin!=null and criteria.loanTimeLimitMin!=''">
+                <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+                <if test="criteria.loanTimeLimitUnit=='0'">
+                    AND loanTimeLimitDays &gt;=#{criteria.loanTimeLimitMin}
+                </if>
+                <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+                <if test="criteria.loanTimeLimitUnit=='1'">
+                    AND loanTimeLimit &gt;=#{criteria.loanTimeLimitMin}
+                </if>
+            </if>
+            <!-- 不为空则添加最大融资期限条件 -->
+            <if
+                test="criteria.loanTimeLimitMax!=null and criteria.loanTimeLimitMax!=''">
+                <!-- 判断融资期限单位 标识为0则标识单位是天 -->
+                <if test="criteria.loanTimeLimitUnit='0'">
+                    AND LOAN_TIME_LIMIT_DAYS
+                    &lt;=#{criteria.loanTimeLimitMax}
+                </if>
+                <!-- 判断融资期限单位 标识为1则标识单位是月 -->
+                <if test="criteria.loanTimeLimitUnit=='1'">
+                    AND LOAN_TIME_LIMIT &lt;=#{criteria.loanTimeLimitMax}
+                </if>
+            </if>
+            <!-- 融资状态的集合 -->
+            <if test="criteria.status!=null">
+                AND LOAN_STATUS IN
+                <foreach collection="criteria.status" index="index" open="("
+                    separator="," close=")">
+                    #{criteria.status[${index}]}
+                </foreach>
+            </if>
+             <!-- 添加担保公司查询条件 -->
+	         <if test="criteria.guaranteeComCode!=null and criteria.guaranteeComCode!=''">
+	         	AND GUARANTEE_COM_CODE = #{criteria.guaranteeComCode}
+	         </if>
+            AND LOAN_POST_TIME &lt; #{criteria.loanPostTime}
+        </where>
+        ORDER BY
+        CASE WHEN LOAN_END_TIME &gt; #{criteria.loanPostTime} AND
+        CURRENT_SURPLUS_SHARE > 0 THEN LOAN_POST_TIME END DESC ,
+        CASE WHEN
+        LOAN_END_TIME &gt; #{criteria.loanPostTime} AND CURRENT_SURPLUS_SHARE
+        &lt; 0 THEN LOAN_POST_TIME END DESC ,
+        CASE WHEN LOAN_END_TIME &lt; #{criteria.loanPostTime} THEN LOAN_POST_TIME
+        END DESC ,
+        LOAN_POST_TIME DESC
+
+    </select>
+    <!-- 获取投资预告列表 对应 findInvestNoticeList方法 -->
+    <select id="findInvestNoticeList" parameterType="LoanCommSelCriteria"
+        resultType="Loan">
+        SELECT
+            <include refid="base_column" />
+         FROM 
+        LOAN
+        <where>
+            lOAN_POST_TIME &gt; #{loanParameter.loanPostTime}
+            <!-- 融资状态的集合 -->
+            <if test="loanParameter.status!=null">
+                AND LOAN_STATUS IN
+                <foreach collection="loanParameter.status" index="index"
+                    open="(" separator="," close=")">
+                    #{loanParameter.status[${index}]}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY lOAN_POST_TIME ASC
+    </select>
+    
+    <!-- 获取财务审批列表 对应 findPageFinancialApproval方法 -->
+    <select id="findPageFinancialApproval"  parameterType="LoanCommSelCriteria"  resultType="Loan">
+        SELECT
+          L.ID,
+        L.LOAN_CODE,
+        L.LOAN_NAME,
+        L.PRODUCT_CODE,
+        L.CUSTOM_CODE,
+        L.CUSTOM_NAME,
+        L.GUARANTEE_COM_CODE,
+        L.LOAN_STATUS,
+        L.LOAN_TYPE,
+        L.LOAN_AMOUNT,
+        L.LOAN_INTEREST_MANNER,
+        L.LOAN_INTEREST_RATES,
+        L.LOAN_TIME_LIMIT_DAYS,
+        L.LOAN_TIME_LIMIT,
+        L.LOAN_TIME_LIMIT_UNIT,
+        L.LOAN_START_SHARE,
+        L.LOAN_UNIT_PRICE,
+        L.LOAN_TOTAL_SHARE,
+        L.LOAN_POST_TIME,
+        L.LOAN_END_TIME,
+        L.LOAN_INTEREST,
+        L.LOAN_MAX_INVEST,
+        L.SERIAL_NUMBER,
+        L.PLATFORM_RATE,
+        L.PLATFORM_FEE,
+        L.PLAT_SERIAL_NUMBER,
+        L.GUARANTEE_RATE,
+        L.GUARANTEE_FEE,
+        L.VOUCH_SERIAL_NUMBER,
+        L.DEPOSIT_RATE,
+        L.CURRENT_INVESTED_SHARE,
+        L.CURRENT_SURPLUS_SHARE,
+        L.ACTUAL_AMOUNT,
+        L.AMOUNT,
+        L.LOAN_TIME,
+        L.CARRY_INTEREST_FROM,
+        L.CARRY_INTEREST_TO,
+        L.REPAY_TYPE,
+        L.TOTAL_REPAY_NUMBER,
+        L.RECEIVABLE_REPAY_NUMBER,
+        L.RECEIVABLE_REPAY_STATUS,
+        L.RECEIVABLE_NEXT_DATE,
+        L.RECEIVABLE_SUM,
+        L.RECEIVABLE_PRINCIPAL,
+        L.RECEIVABLE_INTEREST,
+        L.RECEIVABLE_DELAYING,
+        L.RECEIVABLE_OVERDUE,
+        L.RECEIVED_SUM,
+        L.RECEIVED_PRINCIPAL,
+        L.RECEIVED_INTEREST,
+        L.RECEIVED_DELAYING,
+        L.RECEIVED_OVERDUE,
+        L.APPLY_USER_ID,
+        L.TENANT_ID,
+        L.CREATE_TIME,
+        L.UPDATE_TIME,
+        L.CREATE_USER_ID,
+        L.UPDATE_USER_ID,
+        L.RECEIVABLE_NEXT_SUM,
+        L.VERSION
+        FROM 
+    LOAN L
+        WHERE
+        	 
+            (L.LOAN_STATUS = '07'
+        OR (L.LOAN_STATUS = '10' AND L.RECEIVABLE_REPAY_STATUS = '5'))
+        <!-- 不为空则添加融资项目名称条件 -->
+        <if test="loanParameter.loanName!=null and loanParameter.loanName!=''">
+            AND L.LOAN_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.loanName}),'%')
+        </if>
+        <!-- 不为空则添加客户名称条件 -->
+        <if test="loanParameter.customName!=null and loanParameter.customName!=''">
+            AND L.CUSTOM_NAME LIKE CONCAT(CONCAT('%',#{loanParameter.customName}),'%')
+        </if>
+        <if test="loanParameter.loanCode!=null and loanParameter.loanCode!=''">
+            AND L.LOAN_CODE LIKE CONCAT(CONCAT('%',#{loanParameter.loanCode}),'%')
+        </if>
+        ORDER BY L.UPDATE_TIME DESC
+    </select>
+</mapper>

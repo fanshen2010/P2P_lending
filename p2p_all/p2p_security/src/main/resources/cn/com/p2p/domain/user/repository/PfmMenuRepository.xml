@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.repository.PfmMenuRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        MENU_ID,
+        MENU_LEVEL,
+        MENU_PARENT_ID,
+        MENU_NAME,
+        ORDER_NUM,
+        MENU_ICON,
+        MENU_URL,
+        MENU_TARGET,
+        MENU_CLASS,
+        STATUS,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="PfmMenu">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_MENU
+        WHERE
+            MENU_ID = #{menuId}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="PfmMenu">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PFM_MENU
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="PfmMenuCriteria" resultType="PfmMenu">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PFM_MENU
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="PfmMenu">
+        INSERT INTO
+            PFM_MENU
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{menuId},
+          #{menuLevel},
+          #{menuParentId},
+          #{menuName},
+          #{orderNum},
+          #{menuIcon},
+          #{menuUrl},
+          #{menuTarget},
+          #{menuClass},
+          #{status},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="PfmMenu">
+        UPDATE
+            PFM_MENU
+        <set>
+            <if test="menuLevel != null">
+                MENU_LEVEL = #{menuLevel},
+            </if>
+            <if test="menuParentId != null">
+                MENU_PARENT_ID = #{menuParentId},
+            </if>
+            <if test="menuName != null">
+                MENU_NAME = #{menuName},
+            </if>
+            <if test="orderNum != null">
+                ORDER_NUM = #{orderNum},
+            </if>
+            <if test="menuIcon != null">
+                MENU_ICON = #{menuIcon},
+            </if>
+            <if test="menuUrl != null">
+                MENU_URL = #{menuUrl},
+            </if>
+            <if test="menuTarget != null">
+                MENU_TARGET = #{menuTarget},
+            </if>
+            <if test="menuClass != null">
+                MENU_CLASS = #{menuClass},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            MENU_ID = #{menuId}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="PfmMenu">
+        UPDATE
+            PFM_MENU
+        SET
+            MENU_LEVEL = #{menuLevel},
+            MENU_PARENT_ID = #{menuParentId},
+            MENU_NAME = #{menuName},
+            ORDER_NUM = #{orderNum},
+            MENU_ICON = #{menuIcon},
+            MENU_URL = #{menuUrl},
+            MENU_TARGET = #{menuTarget},
+            MENU_CLASS = #{menuClass},
+            STATUS = #{status},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            MENU_ID = #{menuId}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            PFM_MENU
+        SET
+            DEL_FLAG=1
+        WHERE
+            MENU_ID = #{menuId}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PFM_MENU
+        WHERE
+            MENU_ID = #{menuId}
+    </delete>
+</mapper>

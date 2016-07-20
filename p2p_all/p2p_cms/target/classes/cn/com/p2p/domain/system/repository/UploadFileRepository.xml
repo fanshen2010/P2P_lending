@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.system.repository.UploadFileRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        FILE_NAME,
+        FILE_URL_ORIGINAL,
+        FILE_URL_BIG,
+        FILE_URL_THUMB,
+        FILE_TYPE,
+        CREATE_TIME,
+        CREATE_USER_ID
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="UploadFile">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            UPLOAD_FILE
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="UploadFile">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            UPLOAD_FILE
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="UploadFileCriteria" resultType="UploadFile">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            UPLOAD_FILE
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="UploadFile">
+        INSERT INTO
+            UPLOAD_FILE
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{fileName},
+          #{fileUrlOriginal},
+          #{fileUrlBig},
+          #{fileUrlThumb},
+          #{fileType},
+          #{createTime},
+          #{createUserId}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="UploadFile">
+        UPDATE
+            UPLOAD_FILE
+        <set>
+            <if test="fileName != null">
+                FILE_NAME = #{fileName},
+            </if>
+            <if test="fileUrlOriginal != null">
+                FILE_URL_ORIGINAL = #{fileUrlOriginal},
+            </if>
+            <if test="fileUrlBig != null">
+                FILE_URL_BIG = #{fileUrlBig},
+            </if>
+            <if test="fileUrlThumb != null">
+                FILE_URL_THUMB = #{fileUrlThumb},
+            </if>
+            <if test="fileType != null">
+                FILE_TYPE = #{fileType},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="UploadFile">
+        UPDATE
+            UPLOAD_FILE
+        SET
+            FILE_NAME = #{fileName},
+            FILE_URL_ORIGINAL = #{fileUrlOriginal},
+            FILE_URL_BIG = #{fileUrlBig},
+            FILE_URL_THUMB = #{fileUrlThumb},
+            FILE_TYPE = #{fileType},
+            CREATE_TIME = #{createTime},
+            CREATE_USER_ID = #{createUserId}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            UPLOAD_FILE
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            UPLOAD_FILE
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

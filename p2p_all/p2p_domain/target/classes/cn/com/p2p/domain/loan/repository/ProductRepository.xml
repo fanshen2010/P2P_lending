@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.repository.ProductRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        NAME,
+        PROC_ID,
+        INTEREST_MANNER,
+        HAS_GUARANTEE_FLAG,
+        TPL_CODE,
+        STATUS,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="Product">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PRODUCT
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="Product">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PRODUCT
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="ProductCriteria" resultType="Product">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PRODUCT
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="Product">
+        INSERT INTO
+            PRODUCT
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{name},
+          #{procId},
+          #{interestManner},
+          #{hasGuaranteeFlag},
+          #{tplCode},
+          #{status},
+          #{tenantId},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="Product">
+        UPDATE
+            PRODUCT
+        <set>
+            <if test="name != null">
+                NAME = #{name},
+            </if>
+            <if test="procId != null">
+                PROC_ID = #{procId},
+            </if>
+            <if test="interestManner != null">
+                INTEREST_MANNER = #{interestManner},
+            </if>
+            <if test="hasGuaranteeFlag != null">
+                HAS_GUARANTEE_FLAG = #{hasGuaranteeFlag},
+            </if>
+            <if test="tplCode != null">
+                TPL_CODE = #{tplCode},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="tenantId != null">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="Product">
+        UPDATE
+            PRODUCT
+        SET
+            NAME = #{name},
+            PROC_ID = #{procId},
+            INTEREST_MANNER = #{interestManner},
+            HAS_GUARANTEE_FLAG = #{hasGuaranteeFlag},
+            TPL_CODE = #{tplCode},
+            STATUS = #{status},
+            TENANT_ID = #{tenantId},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            PRODUCT
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PRODUCT
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

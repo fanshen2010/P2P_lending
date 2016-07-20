@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+
+
+    <!-- 追加点2 特定业务的code value Maping定义场所-->
+    <util:map id="testMap" map-class="java.util.LinkedHashMap">
+        <entry key="0" value="111" />
+        <entry key="1" value="112" />
+        <entry key="2" value="113" />
+    </util:map>
+    <util:map id="loanTypeMap" map-class="java.util.LinkedHashMap">
+        <entry key="0" value="presonal" />
+        <entry key="1" value="enterprise" />
+    </util:map>    
+    
+    <util:map id="statusMap" map-class="java.util.LinkedHashMap">
+        <entry key="1" value="enabled" />
+        <entry key="0" value="disabled" />
+    </util:map>
+    
+    <!-- 点击链接时，窗口的打开方式 -->
+    <util:map id="windowsMap" map-class="java.util.LinkedHashMap">
+        <entry key="0" value=" new window " />
+        <entry key="1" value=" self window" />
+    </util:map>
+    <!-- 栏目内容管理，页面类别 -->
+    <util:map id="pageTypeMap" map-class="java.util.LinkedHashMap">
+        <entry key="0" value="page " />
+        <entry key="1" value="list " />
+        <entry key="2" value="link" />
+    </util:map>
+    <!-- 是否导入 追加 -->
+    <util:map id="ifExportMap" map-class="java.util.LinkedHashMap">
+        <entry key="1" value="yes" />
+        <entry key="0" value="no" />
+    </util:map>
+    <!-- 是否有担保公司 -->
+    <util:map id="guaranteeMap" map-class="java.util.LinkedHashMap">
+        <entry key="1" value="yes" />
+        <entry key="0" value="no" />
+    </util:map>  
+    <!-- 是否有担保公司 -->
+    <util:map id="IsGuaranteeMap" map-class="java.util.LinkedHashMap">
+        <entry key="1" value="√" />
+        <entry key="0" value="" />
+    </util:map>
+        
+    <util:map id="loanstatusMap" map-class="java.util.LinkedHashMap">
+	    <entry key="0" value="rejected" /><!--被驳回-->
+        <entry key="1" value="applying" /><!--申请中-->
+        <entry key="2" value="auditing" /><!--审核中-->
+        <entry key="3" value="investing" /><!--招标中-->
+        <entry key="4" value="fullscale" /><!--已满额-->
+        <entry key="5" value="underscale" /><!--到期未满-->
+        <entry key="6" value="overscale" /><!--被驳回-->
+    </util:map>
+    
+    <!-- 组织机构类型 -->
+    <util:map id="departStatusMap" map-class="java.util.LinkedHashMap">
+    	<entry key="1" value="Department" />
+        <entry key="2" value="Branch" />
+        <entry key="3" value="Guarantee" />
+    </util:map>
+    
+    <!-- 使用环境 -->
+    <util:map id="useEnviMap" map-class="java.util.LinkedHashMap">
+    	<entry key="0" value="模拟平台" />
+        <entry key="1" value="短信平台" />
+    </util:map>
+    <!-- 投资类型  -->
+    <util:map id="investTypeMap" map-class="java.util.LinkedHashMap">
+    	<entry key="1" value="常规债权" />
+        <entry key="2" value="转让债权" />
+    </util:map>
+    <!-- 投资人帐户状态  -->
+    <util:map id="InvestorsStatusMap" map-class="java.util.LinkedHashMap">
+    	<entry key="1" value="enabled" />
+        <entry key="0" value="disabled" />
+    </util:map>
+    <!-- 企业规模  -->
+    <util:map id="enterpriseScaleMap" map-class="java.util.LinkedHashMap">
+    	<entry key="1" value="0-10 people" />
+        <entry key="2" value="10-20 people" />
+        <entry key="3" value="20-50 people" />
+        <entry key="4" value="50-100 people" />
+        <entry key="5" value="more people" />
+    </util:map>
+    <bean id="bizCodeList"
+        class="cn.com.p2p.framework.code.BizCodeList">
+        <property name="rows">
+            <util:map key-type="java.lang.String" value-type="java.util.LinkedHashMap"
+                map-class="java.util.LinkedHashMap">
+                <!-- 追加点1 业务key对应的 codeList-->
+                <entry key="loanstatus" value-ref="loanstatusMap" />
+                <entry key="loanType" value-ref="loanTypeMap" />
+                <entry key="002" value-ref="testMap" />
+                <entry key="status" value-ref="statusMap" />
+                <entry key="windows" value-ref="windowsMap" />
+                <entry key="pageType" value-ref="pageTypeMap" />
+                <entry key="ifExport" value-ref="ifExportMap" />
+                <entry key="guarantee" value-ref="guaranteeMap" />
+                <entry key="useEnvi" value-ref="useEnviMap" />
+                <entry key="departStatus" value-ref="departStatusMap" />
+                <entry key="investType" value-ref="investTypeMap" />
+                <entry key="IsGuarantee" value-ref="IsGuaranteeMap" />
+                <entry key="investorsStatus" value-ref="InvestorsStatusMap" />
+                <entry key="enterpriseScale" value-ref="enterpriseScaleMap" />
+            </util:map>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.query.PfmUserManageQuery">
+    <!-- 查询部门为空的用户 -->
+    <select id="findPfmUserByDepartCd" parameterType="String" resultType="PfmUser">
+        SELECT
+              ID,
+              REAL_NAME
+        FROM PFM_USER
+        
+        WHERE 1=1
+        	<if test="realName != null">
+            AND REAL_NAME LIKE CONCAT(CONCAT('%',#{realName}),'%')    
+            </if>
+             AND  (DEPART_CD = '' OR DEPART_CD = null)
+    </select>  
+     <select id="findPfmUserOfNoPost" parameterType="String" resultType="PfmUser">
+        SELECT ID,
+               REAL_NAME
+          FROM PFM_USER
+        WHERE
+             REAL_NAME LIKE CONCAT(CONCAT('%',#{realName}),'%')    
+             AND  (POST_CD = '' OR POST_CD is NULL)
+    </select>  
+    
+    <!-- 用户Dto结果Map -->
+    <resultMap id="PfmUserMap" type="cn.com.p2p.usermangent.service.dto.PfmUserDto">
+	        <result property="id" column="ID" />
+	        <result property="userName" column="USER_NAME" />
+	        <result property="realName" column="REAL_NAME" />
+	        <result property="contactPhone" column="CONTACT_PHONE" />
+	        <result property="emailAddress" column="EMAIL_ADDRESS" />
+	        <result property="departName" column="DEPARTMENT_NAME" />
+	        <result property="postName" column="POST_NAME" />
+	        <result property="active" column="ACTIVE" />
+	</resultMap>
+	
+  <!-- 根据多条件查询用户Dto结果集合 -->
+  <select id="findPagePfmUserDtoByCriteria" resultMap="PfmUserMap" parameterType="PfmUserCriteria">
+  		SELECT 
+        	l.ID AS 'ID',
+        	l.USER_NAME AS 'USER_NAME',
+        	l.REAL_NAME AS 'REAL_NAME',
+        	l.CONTACT_PHONE AS 'CONTACT_PHONE',
+        	l.EMAIL_ADDRESS AS 'EMAIL_ADDRESS',
+        	r1.DEPARTMENT_NAME AS 'DEPARTMENT_NAME',
+        	r2.POST_NAME AS 'POST_NAME',
+        	l.ACTIVE AS 'ACTIVE'
+         FROM 
+        	PFM_USER l 
+        	LEFT JOIN PFM_TENANT_DEPARTMENT r1 ON l.DEPART_CD=r1.DEPARTMENT_CD
+			LEFT JOIN PFM_TENANT_POST r2 ON l.POST_CD=r2.POST_CD
+    	<where>
+    		<if test="criteria.id !=null and criteria.id != ''">
+    			AND l.ID=#{criteria.id}
+    		</if>
+    		<if test="criteria.userName !=null and criteria.userName != ''">
+    			AND l.USER_NAME=#{criteria.userName}
+    		</if>
+    		<if test="criteria.realName !=null and criteria.realName != ''">
+    			AND l.REAL_NAME LIKE CONCAT(CONCAT('%',#{criteria.realName}),'%')
+    		</if>
+    		<if test="criteria.contactPhone !=null and criteria.contactPhone != ''">
+    			AND l.CONTACT_PHONE=#{criteria.contactPhone}
+    		</if>
+    		<if test="criteria.emailAddress !=null and criteria.emailAddress != ''">
+    			AND l.EMAIL_ADDRESS=#{criteria.emailAddress}
+    		</if>
+    		<if test="criteria.currentLoginAt">
+    			AND l.CURRENT_LOGIN_AT=#{criteria.currentLoginAt}
+    		</if>
+    		<if test="criteria.currentLoginIp !=null and criteria.currentLoginIp != ''">
+    			AND l.CURRENT_LOGIN_IP=#{criteria.currentLoginIp}
+    		</if>
+    		<if test="criteria.lockFlag !=null and criteria.lockFlag != ''">
+    			AND l.LOCK_FLAG=#{criteria.lockFlag}
+    		</if>
+    		<if test="criteria.failureLoginAccount != null">
+    			AND l.FAILURE_LOGIN_ACCOUNT=#{criteria.failureLoginAccount}
+    		</if>
+    		<if test="criteria.lockDate !=null">
+    			AND l.LOCK_DATE=#{criteria.lockDate}
+    		</if>
+    		<if test="criteria.validFlag !=null and criteria.validFlag != ''">
+    			AND l.VALID_FLAG=#{criteria.validFlag}
+    		</if>
+    		<if test="criteria.postCd !=null and criteria.postCd != ''">
+    			AND l.POST_CD=#{criteria.postCd}
+    		</if>
+    		<if test="criteria.departCd !=null and criteria.departCd != ''">
+    			AND l.DEPART_CD=#{criteria.departCd}
+    		</if>
+    		<if test="criteria.tenantCd !=null and criteria.tenantCd != ''">
+    			AND l.TENANT_CD=#{criteria.tenantCd}
+    		</if>
+    		<if test="criteria.active !=null and criteria.active != ''">
+    			AND l.ACTIVE=#{criteria.active}
+    		</if>
+    		<if test="criteria.lastLoginAt !=null">
+    			AND l.LAST_LOGIN_AT=#{criteria.lastLoginAt}
+    		</if>
+    		<if test="criteria.lastLoginIp !=null and criteria.lastLoginIp != ''">
+    			AND l.LAST_LOGIN_IP=#{criteria.lastLoginIp}
+    		</if>
+    		<if test="criteria.lastQuestAt !=null">
+    			AND l.LAST_QUEST_AT=#{criteria.lastQuestAt}
+    		</if>
+    		<if test="criteria.createTime !=null">
+    			AND l.CREATE_TIME=#{criteria.createTime}
+    		</if>
+    		<if test="criteria.updateTime !=null and criteria.updateTime != ''">
+    			AND l.UPDATE_TIME=#{criteria.updateTime}
+    		</if>
+    		<if test="criteria.createUserId !=null and criteria.createUserId != ''">
+    			AND l.CREATE_USER_ID=#{criteria.createUserId}
+    		</if>
+    		<if test="criteria.updateUserId !=null and criteria.updateUserId != ''">
+    			AND l.UPDATE_USER_ID=#{criteria.updateUserId}
+    		</if>
+    		<if test="criteria.version !=null and criteria.version != ''">
+    			AND l.VERSION=#{criteria.version}
+    		</if>
+    	</where>
+      		
+  </select>
+  
+  <!-- 根据ID查询用户Dto集合 -->
+  <select id="findPfmUserById" resultMap="PfmUserMap" parameterType="String">
+  		SELECT 
+        	l.ID AS 'ID',
+        	l.USER_NAME AS 'USER_NAME',
+        	l.REAL_NAME AS 'REAL_NAME',
+        	l.CONTACT_PHONE AS 'CONTACT_PHONE',
+        	l.EMAIL_ADDRESS AS 'EMAIL_ADDRESS',
+        	r1.DEPARTMENT_NAME AS 'DEPARTMENT_NAME',
+        	r2.POST_NAME AS 'POST_NAME',
+        	l.ACTIVE AS 'ACTIVE'
+         FROM 
+        	PFM_USER l 
+        	LEFT JOIN PFM_TENANT_DEPARTMENT r1 ON l.DEPART_CD=r1.DEPARTMENT_CD
+			LEFT JOIN PFM_TENANT_POST r2 ON l.POST_CD=r2.POST_CD
+    	<where>
+    		AND l.ID=#{id}
+    	</where>	
+  </select>
+  
+  <!-- 根据用户名查询用户Dto集合 -->
+  <select id="findAll" resultMap="PfmUserMap" parameterType="String">
+  		SELECT 
+        	l.ID AS 'ID',
+        	l.USER_NAME AS 'USER_NAME',
+        	l.REAL_NAME AS 'REAL_NAME',
+        	l.CONTACT_PHONE AS 'CONTACT_PHONE',
+        	l.EMAIL_ADDRESS AS 'EMAIL_ADDRESS',
+        	r1.DEPARTMENT_NAME AS 'DEPARTMENT_NAME',
+        	r2.POST_NAME AS 'POST_NAME',
+        	l.ACTIVE AS 'ACTIVE'
+         FROM 
+        	PFM_USER l 
+        	LEFT JOIN PFM_TENANT_DEPARTMENT r1 ON l.DEPART_CD=r1.DEPARTMENT_CD
+			LEFT JOIN PFM_TENANT_POST r2 ON l.POST_CD=r2.POST_CD
+		<where>
+    		<if test="realName !=null and realName != ''">
+       			AND l.REAL_NAME LIKE CONCAT(CONCAT('%',#{realName}),'%')
+       		</if>
+    	</where>		
+  </select>
+</mapper>

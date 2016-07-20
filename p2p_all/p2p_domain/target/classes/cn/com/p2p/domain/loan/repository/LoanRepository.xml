@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.repository.LoanRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        LOAN_CODE,
+        LOAN_NAME,
+        PRODUCT_CODE,
+        CUSTOM_CODE,
+        CUSTOM_NAME,
+        GUARANTEE_COM_CODE,
+        LOAN_STATUS,
+        LOAN_TYPE,
+        LOAN_AMOUNT,
+        LOAN_INTEREST_MANNER,
+        LOAN_INTEREST_RATES,
+        LOAN_TIME_LIMIT_DAYS,
+        LOAN_TIME_LIMIT,
+        LOAN_TIME_LIMIT_UNIT,
+        LOAN_START_SHARE,
+        LOAN_UNIT_PRICE,
+        LOAN_TOTAL_SHARE,
+        LOAN_POST_TIME,
+        LOAN_END_TIME,
+        LOAN_INTEREST,
+        LOAN_MAX_INVEST,
+        SERIAL_NUMBER,
+        PLATFORM_RATE,
+        PLATFORM_FEE,
+        PLAT_SERIAL_NUMBER,
+        GUARANTEE_RATE,
+        GUARANTEE_FEE,
+        VOUCH_SERIAL_NUMBER,
+        DEPOSIT_RATE,
+        CURRENT_INVESTED_SHARE,
+        CURRENT_SURPLUS_SHARE,
+        ACTUAL_AMOUNT,
+        AMOUNT,
+        LOAN_TIME,
+        CARRY_INTEREST_FROM,
+        CARRY_INTEREST_TO,
+        REPAY_TYPE,
+        TOTAL_REPAY_NUMBER,
+        RECEIVABLE_REPAY_NUMBER,
+        RECEIVABLE_REPAY_STATUS,
+        RECEIVABLE_NEXT_DATE,
+        RECEIVABLE_NEXT_SUM,
+        RECEIVABLE_SUM,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_INTEREST,
+        RECEIVABLE_DELAYING,
+        RECEIVABLE_OVERDUE,
+        RECEIVED_SUM,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_INTEREST,
+        RECEIVED_DELAYING,
+        RECEIVED_OVERDUE,
+        APPLY_USER_ID,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="Loan">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            LOAN
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+    <!--按主键进行查询，返回唯一一条记录 对应repository findLoanByloanCode方法 -->
+    <select id="findLoanByLoanCode" parameterType="string" resultType="Loan">
+        SELECT
+            <include refid="base_column" />
+        FROM
+            LOAN
+        WHERE
+            LOAN_CODE = #{loanCode}
+    </select>
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="Loan">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            LOAN
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="LoanCriteria" resultType="Loan">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            LOAN
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="Loan">
+        INSERT INTO
+            LOAN
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{loanCode},
+          #{loanName},
+          #{productCode},
+          #{customCode},
+          #{customName},
+          #{guaranteeComCode},
+          #{loanStatus},
+          #{loanType},
+          #{loanAmount},
+          #{loanInterestManner},
+          #{loanInterestRates},
+          #{loanTimeLimitDays},
+          #{loanTimeLimit},
+          #{loanTimeLimitUnit},
+          #{loanStartShare},
+          #{loanUnitPrice},
+          #{loanTotalShare},
+          #{loanPostTime},
+          #{loanEndTime},
+          #{loanInterest},
+          #{loanMaxInvest},
+          #{serialNumber},
+          #{platformRate},
+          #{platformFee},
+          #{platSerialNumber},
+          #{guaranteeRate},
+          #{guaranteeFee},
+          #{vouchSerialNumber},
+          #{depositRate},
+          #{currentInvestedShare},
+          #{currentSurplusShare},
+          #{actualAmount},
+          #{amount},
+          #{loanTime},
+          #{carryInterestFrom},
+          #{carryInterestTo},
+          #{repayType},
+          #{totalRepayNumber},
+          #{receivableRepayNumber},
+          #{receivableRepayStatus},
+          #{receivableNextDate},
+          #{receivableNextSum},
+          #{receivableSum},
+          #{receivablePrincipal},
+          #{receivableInterest},
+          #{receivableDelaying},
+          #{receivableOverdue},
+          #{receivedSum},
+          #{receivedPrincipal},
+          #{receivedInterest},
+          #{receivedDelaying},
+          #{receivedOverdue},
+          #{applyUserId},
+          #{tenantId},
+          #{createTime},
+          #{updateTime},
+          #{createUserId},
+          #{updateUserId},
+          #{version}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="Loan">
+        UPDATE
+            LOAN
+        <set>
+            <if test="loanCode != null">
+                LOAN_CODE = #{loanCode},
+            </if>
+            <if test="loanName != null">
+                LOAN_NAME = #{loanName},
+            </if>
+            <if test="productCode != null">
+                PRODUCT_CODE = #{productCode},
+            </if>
+            <if test="customCode != null">
+                CUSTOM_CODE = #{customCode},
+            </if>
+            <if test="customName != null">
+                CUSTOM_NAME = #{customName},
+            </if>
+            <if test="guaranteeComCode != null">
+                GUARANTEE_COM_CODE = #{guaranteeComCode},
+            </if>
+            <if test="loanStatus != null">
+                LOAN_STATUS = #{loanStatus},
+            </if>
+            <if test="loanType != null">
+                LOAN_TYPE = #{loanType},
+            </if>
+            <if test="loanAmount != null">
+                LOAN_AMOUNT = #{loanAmount},
+            </if>
+            <if test="loanInterestManner != null">
+                LOAN_INTEREST_MANNER = #{loanInterestManner},
+            </if>
+            <if test="loanInterestRates != null">
+                LOAN_INTEREST_RATES = #{loanInterestRates},
+            </if>
+            <if test="loanTimeLimitDays != null">
+                LOAN_TIME_LIMIT_DAYS = #{loanTimeLimitDays},
+            </if>
+            <if test="loanTimeLimit != null">
+                LOAN_TIME_LIMIT = #{loanTimeLimit},
+            </if>
+            <if test="loanTimeLimitUnit != null">
+                LOAN_TIME_LIMIT_UNIT = #{loanTimeLimitUnit},
+            </if>
+            <if test="loanStartShare != null">
+                LOAN_START_SHARE = #{loanStartShare},
+            </if>
+            <if test="loanUnitPrice != null">
+                LOAN_UNIT_PRICE = #{loanUnitPrice},
+            </if>
+            <if test="loanTotalShare != null">
+                LOAN_TOTAL_SHARE = #{loanTotalShare},
+            </if>
+            <if test="loanPostTime != null">
+                LOAN_POST_TIME = #{loanPostTime},
+            </if>
+            <if test="loanEndTime != null">
+                LOAN_END_TIME = #{loanEndTime},
+            </if>
+            <if test="loanInterest != null">
+                LOAN_INTEREST = #{loanInterest},
+            </if>
+            <if test="loanMaxInvest != null">
+                LOAN_MAX_INVEST = #{loanMaxInvest},
+            </if>
+            <if test="serialNumber != null">
+                SERIAL_NUMBER = #{serialNumber},
+            </if>
+            <if test="platformRate != null">
+                PLATFORM_RATE = #{platformRate},
+            </if>
+            <if test="platformFee != null">
+                PLATFORM_FEE = #{platformFee},
+            </if>
+            <if test="platSerialNumber != null">
+                PLAT_SERIAL_NUMBER = #{platSerialNumber},
+            </if>
+            <if test="guaranteeRate != null">
+                GUARANTEE_RATE = #{guaranteeRate},
+            </if>
+            <if test="guaranteeFee != null">
+                GUARANTEE_FEE = #{guaranteeFee},
+            </if>
+            <if test="vouchSerialNumber != null">
+                VOUCH_SERIAL_NUMBER = #{vouchSerialNumber},
+            </if>
+            <if test="depositRate != null">
+                DEPOSIT_RATE = #{depositRate},
+            </if>
+            <if test="currentInvestedShare != null">
+                CURRENT_INVESTED_SHARE = #{currentInvestedShare},
+            </if>
+            <if test="currentSurplusShare != null">
+                CURRENT_SURPLUS_SHARE = #{currentSurplusShare},
+            </if>
+            <if test="actualAmount != null">
+                ACTUAL_AMOUNT = #{actualAmount},
+            </if>
+            <if test="amount != null">
+                AMOUNT = #{amount},
+            </if>
+            <if test="loanTime != null">
+                LOAN_TIME = #{loanTime},
+            </if>
+            <if test="carryInterestFrom != null">
+                CARRY_INTEREST_FROM = #{carryInterestFrom},
+            </if>
+            <if test="carryInterestTo != null">
+                CARRY_INTEREST_TO = #{carryInterestTo},
+            </if>
+            <if test="repayType != null">
+                REPAY_TYPE = #{repayType},
+            </if>
+            <if test="totalRepayNumber != null">
+                TOTAL_REPAY_NUMBER = #{totalRepayNumber},
+            </if>
+            <if test="receivableRepayNumber != null">
+                RECEIVABLE_REPAY_NUMBER = #{receivableRepayNumber},
+            </if>
+            <if test="receivableRepayStatus != null">
+                RECEIVABLE_REPAY_STATUS = #{receivableRepayStatus},
+            </if>
+            <if test="receivableNextDate != null">
+                RECEIVABLE_NEXT_DATE = #{receivableNextDate},
+            </if>
+            <if test="receivableNextSum != null">
+                RECEIVABLE_NEXT_SUM = #{receivableNextSum},
+            </if>
+            <if test="receivableSum != null">
+                RECEIVABLE_SUM = #{receivableSum},
+            </if>
+            <if test="receivablePrincipal != null">
+                RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            </if>
+            <if test="receivableInterest != null">
+                RECEIVABLE_INTEREST = #{receivableInterest},
+            </if>
+            <if test="receivableDelaying != null">
+                RECEIVABLE_DELAYING = #{receivableDelaying},
+            </if>
+            <if test="receivableOverdue != null">
+                RECEIVABLE_OVERDUE = #{receivableOverdue},
+            </if>
+            <if test="receivedSum != null">
+                RECEIVED_SUM = #{receivedSum},
+            </if>
+            <if test="receivedPrincipal != null">
+                RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            </if>
+            <if test="receivedInterest != null">
+                RECEIVED_INTEREST = #{receivedInterest},
+            </if>
+            <if test="receivedDelaying != null">
+                RECEIVED_DELAYING = #{receivedDelaying},
+            </if>
+            <if test="receivedOverdue != null">
+                RECEIVED_OVERDUE = #{receivedOverdue},
+            </if>
+            <if test="applyUserId != null">
+                APPLY_USER_ID = #{applyUserId},
+            </if>
+            <if test="tenantId != null">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime},
+            </if>
+            <if test="createUserId != null">
+                CREATE_USER_ID = #{createUserId},
+            </if>
+            <if test="updateUserId != null">
+                UPDATE_USER_ID = #{updateUserId},
+            </if>
+            <if test="version != null">
+                VERSION = #{version}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="Loan">
+        UPDATE
+            LOAN
+        SET
+            LOAN_CODE = #{loanCode},
+            LOAN_NAME = #{loanName},
+            PRODUCT_CODE = #{productCode},
+            CUSTOM_CODE = #{customCode},
+            CUSTOM_NAME = #{customName},
+            GUARANTEE_COM_CODE = #{guaranteeComCode},
+            LOAN_STATUS = #{loanStatus},
+            LOAN_TYPE = #{loanType},
+            LOAN_AMOUNT = #{loanAmount},
+            LOAN_INTEREST_MANNER = #{loanInterestManner},
+            LOAN_INTEREST_RATES = #{loanInterestRates},
+            LOAN_TIME_LIMIT_DAYS = #{loanTimeLimitDays},
+            LOAN_TIME_LIMIT = #{loanTimeLimit},
+            LOAN_TIME_LIMIT_UNIT = #{loanTimeLimitUnit},
+            LOAN_START_SHARE = #{loanStartShare},
+            LOAN_UNIT_PRICE = #{loanUnitPrice},
+            LOAN_TOTAL_SHARE = #{loanTotalShare},
+            LOAN_POST_TIME = #{loanPostTime},
+            LOAN_END_TIME = #{loanEndTime},
+            LOAN_INTEREST = #{loanInterest},
+            LOAN_MAX_INVEST = #{loanMaxInvest},
+            SERIAL_NUMBER = #{serialNumber},
+            PLATFORM_RATE = #{platformRate},
+            PLATFORM_FEE = #{platformFee},
+            PLAT_SERIAL_NUMBER = #{platSerialNumber},
+            GUARANTEE_RATE = #{guaranteeRate},
+            GUARANTEE_FEE = #{guaranteeFee},
+            VOUCH_SERIAL_NUMBER = #{vouchSerialNumber},
+            DEPOSIT_RATE = #{depositRate},
+            CURRENT_INVESTED_SHARE = #{currentInvestedShare},
+            CURRENT_SURPLUS_SHARE = #{currentSurplusShare},
+            ACTUAL_AMOUNT = #{actualAmount},
+            AMOUNT = #{amount},
+            LOAN_TIME = #{loanTime},
+            CARRY_INTEREST_FROM = #{carryInterestFrom},
+            CARRY_INTEREST_TO = #{carryInterestTo},
+            REPAY_TYPE = #{repayType},
+            TOTAL_REPAY_NUMBER = #{totalRepayNumber},
+            RECEIVABLE_REPAY_NUMBER = #{receivableRepayNumber},
+            RECEIVABLE_REPAY_STATUS = #{receivableRepayStatus},
+            RECEIVABLE_NEXT_DATE = #{receivableNextDate},
+            RECEIVABLE_NEXT_SUM = #{receivableNextSum},
+            RECEIVABLE_SUM = #{receivableSum},
+            RECEIVABLE_PRINCIPAL = #{receivablePrincipal},
+            RECEIVABLE_INTEREST = #{receivableInterest},
+            RECEIVABLE_DELAYING = #{receivableDelaying},
+            RECEIVABLE_OVERDUE = #{receivableOverdue},
+            RECEIVED_SUM = #{receivedSum},
+            RECEIVED_PRINCIPAL = #{receivedPrincipal},
+            RECEIVED_INTEREST = #{receivedInterest},
+            RECEIVED_DELAYING = #{receivedDelaying},
+            RECEIVED_OVERDUE = #{receivedOverdue},
+            APPLY_USER_ID = #{applyUserId},
+            TENANT_ID = #{tenantId},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime},
+            CREATE_USER_ID = #{createUserId},
+            UPDATE_USER_ID = #{updateUserId},
+            VERSION = #{version}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            LOAN
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            LOAN
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

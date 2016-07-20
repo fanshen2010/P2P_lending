@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.user.query.PfmRoleManageQuery">
+
+    <!--用户权限下的菜单查询 -->
+    <select id="findLeftPfmMenu" parameterType="List" resultType="PfmMenu">
+        SELECT  PFM_MENU.MENU_ID,
+                PFM_MENU.MENU_ICON,
+                PFM_MENU.ORDER_NUM,
+                PFM_MENU.MENU_NAME,
+                PFM_MENU.STATUS,
+                PFM_MENU.MENU_URL,
+                PFM_MENU.MENU_LEVEL,
+                PFM_MENU.MENU_PARENT_ID,
+                PFM_MENU.MENU_TARGET,
+                PFM_MENU.MENU_CLASS
+        FROM PFM_ROLE_MENU
+          LEFT JOIN PFM_MENU ON PFM_ROLE_MENU.MENU_ID = PFM_MENU.MENU_ID
+        WHERE
+          PFM_MENU.STATUS = 1 and PFM_MENU.MENU_LEVEL in (1,2,3)
+          AND PFM_ROLE_MENU.ROLE_ID IN
+          <foreach collection="roleIdList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+          </foreach>
+        ORDER BY PFM_MENU.ORDER_NUM ASC, PFM_MENU.MENU_LEVEL DESC
+    </select>
+
+    <select id="findPfmUserRoleByPost" parameterType="String" resultType="PfmPostRole">
+        SELECT
+              ID,
+              ROLE_ID,
+              POST_ID
+        FROM PFM_POST_ROLE
+        WHERE
+             POST_ID=#{postId}
+    </select>   
+        
+    <!--根据职位ID查询所有的角色 -->
+    <select id="findPostRole" parameterType="String" resultType="PfmRole">
+        SELECT  PFM_ROLE.ROLE_ID,
+                PFM_ROLE.ROLE_MEM,
+                PFM_ROLE.ROLE_NAME,
+                PFM_ROLE.ROLE_STATE,
+                PFM_ROLE.TENANT_CD
+                FROM PFM_POST_ROLE
+                  LEFT JOIN PFM_ROLE ON PFM_POST_ROLE.ROLE_ID = PFM_ROLE.ROLE_ID
+                WHERE
+                  PFM_ROLE.ROLE_STATE = 1 and PFM_POST_ROLE.POST_ID = #{postCd}
+                ORDER BY PFM_ROLE.ROLE_ID
+    </select>
+    
+    <!--根据角色ID查询所有的菜单 -->
+    <select id="findRoleMenu" parameterType="String" resultType="PfmMenu">
+        SELECT  PFM_MENU.MENU_ID,
+                PFM_MENU.MENU_ICON,
+                PFM_MENU.ORDER_NUM,
+                PFM_MENU.MENU_NAME,
+                PFM_MENU.STATUS,
+                PFM_MENU.MENU_URL,
+                PFM_MENU.MENU_LEVEL,
+                PFM_MENU.MENU_PARENT_ID,
+                PFM_MENU.MENU_TARGET,
+                PFM_MENU.MENU_CLASS
+              FROM PFM_ROLE_MENU
+                  LEFT JOIN PFM_MENU ON PFM_ROLE_MENU.MENU_ID = PFM_MENU.MENU_ID
+                WHERE
+                  PFM_MENU.STATUS = 1 and PFM_ROLE_MENU.ROLE_ID = #{roleId}
+                ORDER BY PFM_MENU.ORDER_NUM
+    </select> 
+</mapper>

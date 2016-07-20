@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.invest.query.InvestQuery">
+
+ <resultMap type="MyInvestDto" id="bizinvestResultMap">
+ 	<result property="id" column="ID" />
+ 	<result property="loanCode" column="LOAN_CODE" />
+ 	<result property="loanName" column="LOAN_NAME" />
+ 	<result property="investCode" column="INVEST_CODE" />
+ 	<result property="loanTotalShare" column="LOAN_TOTAL_SHARE" />
+ 	<result property="currentInvestedShare" column="CURRENT_INVESTED_SHARE" />
+ 	<result property="loanEndTime" column="LOAN_END_TIME" />
+ 	<result property="investmentAmount" column="INVESTMENT_AMOUNT" />
+ 	<result property="investInterst" column="INVEST_INTERST_RATE" />
+ 	<result property="investmentTime" column="INVESTMENT_TIME" />
+ 	<result property="status" column="STATUS" />
+ 	<result property="receivedPrincipal" column="RECEIVED_PRINCIPAL" />
+ 	<result property="receivedInterest" column="RECEIVED_INTEREST" />
+ 	<result property="carryInterestTo" column="CARRY_INTEREST_TO" />
+ 	<result property="settlementType" column="SETTLEMENT_TYPE" />
+ 	<result property="nextPaymentDate" column="NEXT_PAYMENT_DATE" />
+ 	<result property="carryInterestFrom" column="CARRY_INTEREST_FROM" />
+ 	<result property="loanAmount" column="LOAN_AMOUNT" />
+ 	<result property="receivableRepayStatus" column="RECEIVABLE_REPAY_STATUS" />
+ 	<result property="loanStatus" column="LOAN_STATUS" />
+ </resultMap>
+ <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        INVEST_CODE,
+        LOAN_NAME,
+        INVESTMENT_AMOUNT,
+        INVEST_LIMIT,
+        INVEST_TIME_LIMIT_UNIT,
+        INVESTMENT_TIME,
+        INTEREST_DATE,
+        END_DATE,
+        INVEST_INTERST_RATE,
+        INVEST_INTERST,
+        RECEIVED_PRINCIPAL,
+        RECEIVED_INTEREST,
+        RECEIVABLE_PRINCIPAL,
+        RECEIVABLE_INTEREST,
+        RECEIVED_PUNITIVE,
+        RECEIVABLE_PUNITIVE,
+        PAYMENT_START_DATE,
+        NEXT_PAYMENT_DATE,
+        NEXT_PAYMENT_AMOUNT,
+        NEXT_PAYMENT_NO,
+        PAYMENT_TOTAL_NUM,
+        STATUS,
+        INVEST_TYPE,
+        SETTLEMENT_TYPE,
+        CICC_TRADING_JSON,
+        INVEST_USER_NAME,
+        USER_ID,
+        LOAN_CODE,
+        DEBT_CODE,
+        INVEST_EARNINGS,
+        RECEIVED_ACCOUNT,
+        RECEIVED_ACCOUNT_NAME,
+        SERIAL_NUMBER,
+        TENANT_ID,
+        CREATE_TIME,
+        UPDATE_TIME,
+        CREATE_USER_ID,
+        UPDATE_USER_ID,
+        VERSION
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findInvest" parameterType="string" resultType="Invest">
+        SELECT 
+            <include refid="base_column" />
+        FROM
+            INVEST
+        WHERE
+            INVEST_CODE = #{investCode}
+    </select>
+    <!--根据投资支付流水号获取投资 -->
+    <select id="findOneBySerialNumber" parameterType="string" resultType="Invest">
+        SELECT 
+            <include refid="base_column" />
+        FROM
+            INVEST
+        WHERE
+            SERIAL_NUMBER = #{serialNumber}
+    </select>
+    <!-- 根据用户Id、投资状态获取前台个人中心我的投资信息分页列表 -->
+    <select id="findPageMyInvestDtoList" parameterType="MyInvestDtoCriteria" resultMap="bizinvestResultMap">
+    	SELECT 
+    		i.ID,
+    		i.LOAN_CODE,
+    		i.LOAN_NAME,
+    		i.INVEST_CODE,
+    		<if test="criteria.status != null and criteria.status != '' and criteria.status == 02">
+	    		l.LOAN_TOTAL_SHARE,
+	    		l.CURRENT_INVESTED_SHARE,
+	    		l.LOAN_END_TIME,
+    		</if>
+    		l.CARRY_INTEREST_TO,
+    		i.INVESTMENT_AMOUNT,
+    		i.INVEST_INTERST_RATE,
+    		i.INVESTMENT_TIME,
+    		i.STATUS,
+    		i.RECEIVED_PRINCIPAL,
+    		i.RECEIVED_INTEREST,
+    		i.SETTLEMENT_TYPE,
+    		l.LOAN_AMOUNT
+    	 FROM 
+    		INVEST i INNER JOIN LOAN l ON i.LOAN_CODE=l.LOAN_CODE
+    	WHERE 
+    		i.USER_ID = #{criteria.userId}
+    		<if test="criteria.status != null">
+    			AND i.STATUS = #{criteria.status}
+    		</if>
+    		
+    </select>
+    <!-- 根据用户Id、投资状态获取前台个人中心我的投资信息列表条数 -->
+    <select id="findInvestCountByStatus" parameterType="CustomInvestCriteria" resultType="Integer">
+    	SELECT 
+    		COUNT(*)
+    	FROM 
+    		INVEST i
+    	<where>
+    		 AND i.USER_ID = #{criteria.userId}
+    		<if test="criteria.status!=null">
+          		AND i.STATUS IN
+		        <foreach collection="criteria.status" index="index"  open="(" separator="," close=")">
+		          #{criteria.status[${index}]}     
+		        </foreach>   
+        	</if>
+       	</where> 
+    </select>
+
+	<select id="findMaxInvestCodeByLoanCode" parameterType="string" resultType="string">
+		SELECT MAX(INVEST_CODE) FROM INVEST  WHERE LOAN_CODE LIKE  CONCAT(#{loanCode},'%') 
+	</select>
+	
+	
+	<!-- 根据条件查询投资列表 -->
+	<select id="findEffectInvestListByCriteria" parameterType="CustomInvestCriteria" resultType="Invest">
+		SELECT 
+            <include refid="base_column" />
+        FROM 
+            INVEST
+        <where>
+        	<if test="criteria.loanCode!=null">
+        		AND LOAN_CODE=#{criteria.loanCode}
+        	</if>
+        	<if test="criteria.userId!=null">
+        		AND USER_ID=#{criteria.userId}
+        	</if>
+        	<if test="criteria.status!=null">
+          		AND STATUS IN
+		        <foreach collection="criteria.status" index="index"  open="(" separator="," close=")">
+		          #{criteria.status[${index}]}     
+		        </foreach>   
+        	</if>
+        </where>
+	</select>
+	<!-- 根据条件查询投资列表 -->
+	<select id="findPageInvestListByCriteria" parameterType="CustomInvestCriteria" resultMap="bizinvestResultMap">
+		SELECT 
+           i.ID,
+    		i.LOAN_CODE,
+    		i.LOAN_NAME,
+    		i.INVEST_CODE,
+    		l.LOAN_TOTAL_SHARE,
+    		l.CURRENT_INVESTED_SHARE,
+    		l.LOAN_END_TIME,
+    		l.CARRY_INTEREST_TO,
+    		i.INVESTMENT_AMOUNT,
+    		i.INVEST_INTERST,
+    		i.INVESTMENT_TIME,
+    		i.STATUS,
+    		i.RECEIVED_PRINCIPAL,
+    		i.RECEIVED_INTEREST,
+    		i.SETTLEMENT_TYPE,
+    		i.NEXT_PAYMENT_DATE,
+    		L.CARRY_INTEREST_FROM,
+    		l.LOAN_AMOUNT,
+    		l.RECEIVABLE_REPAY_STATUS,
+    		l.LOAN_STATUS
+    	 FROM 
+    		INVEST i,LOAN l 
+        <where>
+        		AND i.LOAN_CODE=l.LOAN_CODE
+        	<if test="criteria.loanCode!=null">
+        		AND i.LOAN_CODE=#{criteria.loanCode}
+        	</if>
+        	<if test="criteria.userId!=null">
+        		AND i.USER_ID=#{criteria.userId}
+        	</if>
+        	<if test="criteria.status!=null">
+          		AND i.STATUS IN
+		        <foreach collection="criteria.status" index="index"  open="(" separator="," close=")">
+		          #{criteria.status[${index}]}     
+		        </foreach>   
+        	</if>
+        </where>
+        
+        ORDER BY I.INVESTMENT_TIME  DESC
+	</select>
+</mapper>

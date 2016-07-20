@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+           http://www.springframework.org/schema/security  
+           http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<http pattern="/login.htm" security="none" />
+	<http pattern="/**/*.jpg" security="none" />
+	<http pattern="/**/*.png" security="none" />
+	<http pattern="/**/*.gif" security="none" />
+	<http pattern="/**/*.css" security="none" />
+	<http pattern="/**/*.js" security="none" />
+	<http pattern="/**/favicon.ico" security="none" />
+	<http pattern="/**/payment/pageCallBack.html" security="none" />
+
+
+	<http auto-config="false" access-denied-page="/index.htm"
+		use-expressions="true" entry-point-ref="authenticationEntryPoint"
+		access-decision-manager-ref="accessDecisionManager">
+		<intercept-url pattern="/index.htm" access="permitAll" />
+		<intercept-url pattern="/logout.htm" access="permitAll" />
+		<intercept-url pattern="/**/verifyCode.htm" access="permitAll" />
+		<intercept-url pattern="/register.htm" access="permitAll" />
+		<intercept-url pattern="/**/sendPhoneVerifyCode.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/investList.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/investDetail.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/transferList.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/transferDetail.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/investCheck.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/instructions.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/invest/investPlan.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/onlineloan/index.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/aboutus/**/*.htm" access="permitAll" />
+		<intercept-url pattern="/**/retrievepass**/*.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/onlineloan/apply.htm"
+			access="permitAll" />
+		<intercept-url pattern="/**/onlineloan/submitapply.htm"
+			access="permitAll" />
+		<intercept-url pattern="/checkUserLogin.htm" access="permitAll" />
+		<intercept-url pattern="/checkUserPhone.htm" access="permitAll" />
+		<intercept-url pattern="/checkVCode.htm" access="permitAll" />
+		<intercept-url pattern="/saveinfo.htm" access="permitAll" />
+		<intercept-url pattern="/**/agreement/**/*.htm" access="permitAll" />
+		<intercept-url pattern="/**/invest/**/*.htm" access="isAuthenticated()" />
+		<intercept-url pattern="/**/paymentPlan/**/*.htm"
+			access="isAuthenticated()" />
+		<intercept-url pattern="/**/account/**/*.htm" access="isAuthenticated()" />
+		<intercept-url pattern="/**/**" access="isAuthenticated()" />
+
+		<!-- 第二次登录阻止，用户会被转发到 form-login 标签里定义的 authentication-failure-url 的地址 如果是form-base登录，用户会被转发到 
+			session-management 中 session-authention-error-url 的地址 session-fixation-protection 
+			防止Session固定攻击(2.3.3.3) -migrateSession 创建一个新的session,把原来session中所有属性复制到新session中。这是默认值 
+			-none 什么也不做 -newSession 创建一个新的"干净的"session,不会复制session中的数据。 -->
+		<session-management
+			session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+		<custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
+		<logout invalidate-session="true" logout-url="/logout.htm"
+			logout-success-url="${indexUrl}" />
+		<!-- <remember-me services-alias="myremember" use-secure-cookie="true"/> -->
+		<custom-filter ref="loginFilter" before="FORM_LOGIN_FILTER" />
+		<!-- <custom-filter ref="authenticationFilter" before="FILTER_SECURITY_INTERCEPTOR" 
+			/> -->
+	</http>
+	<beans:bean id="sessionAuthenticationStrategy"
+		class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+		<beans:constructor-arg name="sessionRegistry"
+			ref="sessionRegistry" />
+		<beans:property name="maximumSessions" value="1" />
+
+	</beans:bean>
+	<beans:bean id="sessionRegistry"
+		class="org.springframework.security.core.session.SessionRegistryImpl" />
+
+
+	<beans:bean id="concurrencyFilter"
+		class="org.springframework.security.web.session.ConcurrentSessionFilter">
+		<beans:property name="sessionRegistry" ref="sessionRegistry" />
+		<beans:property name="expiredUrl" value="${indexUrl}" />
+	</beans:bean>
+	<beans:bean id="authenticationEntryPoint"
+		class="cn.com.p2p.security.control.front.FeroLoginUrlAuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="${loginUrl}" />
+	</beans:bean>
+	<authentication-manager alias="authenticationManager"
+		erase-credentials="false">
+		<authentication-provider user-service-ref="userLoginService">
+			<password-encoder ref="passwordEncoder">
+				<salt-source user-property="salt" />
+			</password-encoder>
+		</authentication-provider>
+	</authentication-manager>
+
+	<!-- <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> 
+		<beans:property name="basename" value="classpath:org/springframework/security/messages_zh_CN" 
+		/> </beans:bean> -->
+
+	<beans:bean id="passwordEncoder"
+		class="cn.com.p2p.security.control.CheckPasswordEncoder" />
+	<beans:bean id="passwordEncoderUser"
+		class="cn.com.p2p.security.control.CheckUserPasswordEncoder" />
+	<beans:bean id="userLoginService"
+		class="cn.com.p2p.security.login.service.impl.FrontLoginServiceImpl" />
+	<!-- 事件监听:实现了 ApplicationListener监听接口，包括AuthenticationCredentialsNotFoundEvent 
+		事件， AuthorizationFailureEvent事件，AuthorizedEvent事件， PublicInvocationEvent事件 -->
+	<beans:bean
+		class="org.springframework.security.authentication.event.LoggerListener" />
+
+	<beans:bean id="loginFilter"
+		class="cn.com.p2p.security.filter.FrontLoginFilter">
+		<beans:property name="sessionAuthenticationStrategy"
+			ref="sessionAuthenticationStrategy" />
+		<!-- <beans:property name="rememberMeServices" ref="myremember" ></beans:property> -->
+		<beans:property name="filterProcessesUrl" value="/logincheck.htm"></beans:property>
+		<beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean
+				class="cn.com.p2p.security.control.front.MySavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="${defaultUrl}"></beans:property>
+				<beans:property name="alwaysUseDefaultTargetUrl"
+					value="true"></beans:property>
+				<beans:property name="ignoreUrl">
+					<beans:list>
+						<beans:value>/**/invest/investList.htm</beans:value>
+					</beans:list>
+				</beans:property>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean
+				class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="${loginUrl}"></beans:property>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="accessDecisionManager"
+		class="cn.com.p2p.security.control.front.MyAffirmativeBased">
+		<beans:property name="allowIfAllAbstainDecisions"
+			value="false" />
+		<beans:property name="decisionVoters">
+			<beans:list>
+				<beans:bean
+					class="org.springframework.security.web.access.expression.WebExpressionVoter">
+				</beans:bean>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	<!-- 资源与权限对应关系 -->
+	<beans:bean id="customSecurityMetadataSource"
+		class="cn.com.p2p.security.control.back.MySecurityMetaDataSource"
+		init-method="init">
+		<beans:property name="notFindDenied" value="false"></beans:property>
+		<beans:property name="notCheckUrlList">
+			<beans:list>
+				<beans:value>/account/ssss.htm</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+</beans:beans>  

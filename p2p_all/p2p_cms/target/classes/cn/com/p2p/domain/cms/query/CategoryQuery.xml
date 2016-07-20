@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.cms.query.CategoryQuery">
+
+	<!--基本字段定义 -->
+	<sql id="base_column">
+	    ID,
+	    CATEGORY_CODE,
+	    CATEGORY_PATH,
+	    PARENT_CATEGORY,
+	    TITLE,
+	    CONTENT,
+	    SEO_DESCRIPTION,
+	    SEO_KEYWORDS,
+	    ORDER_NUM,
+	    CATEGORY_TYPE,
+	    TARGET,
+	    PER_PAGE,
+	    STATUS,
+	    CREATE_TIME,
+	    UPDATE_TIME,
+	    CREATE_USER_ID,
+	    UPDATE_USER_ID,
+	    VERSION
+	</sql>
+	<!--查询一级标题 对应repository findCategoryFirstTitle方法 -->
+	<select id="findCategoryFirstTitle" resultType="Category">
+		SELECT 
+      		<include refid="base_column" />
+	    FROM 
+	      	CATEGORY
+	  	WHERE
+	    	PARENT_CATEGORY IS NULL OR PARENT_CATEGORY = ""
+	   	ORDER BY ORDER_NUM ASC
+	</select>
+	
+	<!-- 根据父级栏目Id删除 -->
+	<delete id="deleteByParentCategory" parameterType="string">
+	 	 DELETE FROM 
+            CATEGORY
+         WHERE
+            PARENT_CATEGORY = #{parentId} 
+	 </delete>
+ </mapper>

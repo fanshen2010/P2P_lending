@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.payment.repository.PaymentLogRepository">
+
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        TX_CODE,
+        USER_LOGIN,
+        PROJECT_NO,
+        PROJECT_NAME,
+        LOAN_JSON,
+        INVEST_JOSN,
+        PAYMENT_AMOUNT,
+        TYPE,
+        PAYMENT_USAGE,
+        PAYMENT_TIME,
+        TENANT_ID,
+        STATUS,
+        CREATE_TIME,
+        UPDATE_TIME
+    </sql>
+
+    <!--按主键进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOne" parameterType="string" resultType="PaymentLog">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PAYMENT_LOG
+        WHERE
+            ID = #{id}
+    </select>
+ 
+ 
+
+    <!--无条件全部记录检索 对应repository findAll方法 -->
+    <select id="findAll" resultType="PaymentLog">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PAYMENT_LOG
+    </select>
+
+    <!--无条件全部记录分页检索 对应repository findAll方法 -->
+    <select id="findPageAll" parameterType="PaymentLogCriteria" resultType="PaymentLog">
+        SELECT
+            <include refid="base_column" />
+        FROM 
+            PAYMENT_LOG
+    </select>
+
+    <!--插入记录 对应repository insert方法 -->
+    <insert id="insert" parameterType="PaymentLog">
+        INSERT INTO
+            PAYMENT_LOG
+        (
+             <include refid="base_column" />
+
+        )
+        VALUES
+        (
+          #{id},
+          #{txCode},
+          #{userLogin},
+          #{projectNo},
+          #{projectName},
+          #{loanJson},
+          #{investJosn},
+          #{paymentAmount},
+          #{type},
+          #{paymentUsage},
+          #{paymentTime},
+          #{tenantId},
+          #{status},
+          #{createTime},
+          #{updateTime}
+        )
+    </insert>
+
+    <!--动态更新 对Input来的数据不为空的字段进行更新 对应repository dynamicUpdate方法 -->
+    <update id="dynamicUpdate" parameterType="PaymentLog">
+        UPDATE
+            PAYMENT_LOG
+        <set>
+            <if test="txCode != null">
+                TX_CODE = #{txCode},
+            </if>
+            <if test="userLogin != null">
+                USER_LOGIN = #{userLogin},
+            </if>
+            <if test="projectNo != null">
+                PROJECT_NO = #{projectNo},
+            </if>
+            <if test="projectName != null">
+                PROJECT_NAME = #{projectName},
+            </if>
+            <if test="loanJson != null">
+                LOAN_JSON = #{loanJson},
+            </if>
+            <if test="investJosn != null">
+                INVEST_JOSN = #{investJosn},
+            </if>
+            <if test="paymentAmount != null">
+                PAYMENT_AMOUNT = #{paymentAmount},
+            </if>
+            <if test="type != null">
+                TYPE = #{type},
+            </if>
+            <if test="paymentUsage != null">
+                PAYMENT_USAGE = #{paymentUsage},
+            </if>
+            <if test="paymentTime != null">
+                PAYMENT_TIME = #{paymentTime},
+            </if>
+            <if test="tenantId != null">
+                TENANT_ID = #{tenantId},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime}
+            </if>
+        </set>
+        WHERE
+            ID = #{id}
+    </update>
+
+    <!--动态更新 按照实体的值实际数据进行更新对应repository update方法 -->
+    <update id="update" parameterType="PaymentLog">
+        UPDATE
+            PAYMENT_LOG
+        SET
+            TX_CODE = #{txCode},
+            USER_LOGIN = #{userLogin},
+            PROJECT_NO = #{projectNo},
+            PROJECT_NAME = #{projectName},
+            LOAN_JSON = #{loanJson},
+            INVEST_JOSN = #{investJosn},
+            PAYMENT_AMOUNT = #{paymentAmount},
+            TYPE = #{type},
+            PAYMENT_USAGE = #{paymentUsage},
+            PAYMENT_TIME = #{paymentTime},
+            TENANT_ID = #{tenantId},
+            STATUS = #{status},
+            CREATE_TIME = #{createTime},
+            UPDATE_TIME = #{updateTime}
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--假删除 对应repository suspend方法 -->
+    <update id="suspend" parameterType="string">
+        UPDATE
+            PAYMENT_LOG
+        SET
+            DEL_FLAG=1
+        WHERE
+            ID = #{id}
+    </update>
+    
+    <!--真删除 对应repository delete方法 -->    
+    <delete id="delete" parameterType="string">
+        DELETE FROM 
+            PAYMENT_LOG
+        WHERE
+            ID = #{id}
+    </delete>
+</mapper>

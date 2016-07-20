@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanEnterpriseInfoQuery">
+
+    <!--企业融资申信息查询-->
+    <select id="findLoanEnterpriseInfo"  resultType="LoanEnterpriseInfo">
+        SELECT 
+                NAME,
+                        ORGANIZATION_CODE,
+                        LICENSE_NUMBERS,        
+                        LEGAL_REPRESENTATIVE,
+                        CELLPHONE,
+                        BASIC_JSON,
+                        LEGAL_JSON,
+                        EQUITY_JSON,
+                        CONTACT_JSON,
+                        CREDIT_JSON
+        FROM
+            LOAN_ENTERPRISE_INFO
+        <where>
+            <if test="pstrLoanCode != null">
+               LOAN_CODE = #{pstrLoanCode}
+                </if>
+                <if test="pstrCompanyName!=null">
+               AND NAME = #{pstrCompanyName}
+                </if>
+        </where>
+         ORDER BY
+           CREATE_TIME DESC
+    </select>
+    
+    <!--真删除 对应query delete方法 -->    
+    <delete id="deleteByLoanCode" parameterType="string">
+        DELETE FROM 
+            LOAN_ENTERPRISE_INFO
+        WHERE
+            LOAN_CODE = #{loanCode}
+    </delete>
+</mapper>

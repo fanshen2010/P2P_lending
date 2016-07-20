@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.ProductQuery">
+        <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+		NAME,
+		PROC_ID,
+		INTEREST_MANNER,
+		HAS_GUARANTEE_FLAG,
+		TPL_CODE,
+		STATUS,
+		TENANT_ID,
+		CREATE_TIME,
+		UPDATE_TIME,
+		CREATE_USER_ID,
+		UPDATE_USER_ID,
+		VERSION
+    </sql>
+
+     <!--根据产品编号查询产品 -->
+    <select id="findProductByCode" parameterType="string" resultType="Product">
+        SELECT 
+            <include refid="base_column" />
+        FROM 
+            PRODUCT
+        WHERE
+            ID = #{productCode}
+    </select>
+</mapper>

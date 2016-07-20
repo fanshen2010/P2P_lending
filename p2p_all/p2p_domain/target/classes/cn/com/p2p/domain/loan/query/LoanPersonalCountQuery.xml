@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.loan.query.LoanPersonalCountQuery">
+
+    <!--查询个人融资的最近一次融资信息 对应query findLoanPersonalCount方法 -->
+    <!-- 
+    <select id="findLoanPersonalCount" parameterType="String" resultType="int">
+        SELECT
+            COUNT(*)  
+        FROM
+            LOAN L
+    	WHERE L.STATUS >'10' 
+    		AND L.CUSTOM_CODE=(
+    			SELECT 
+    				L2.CUSTOM_CODE	
+    			FROM 
+    				CUSTOMER C    			
+    			WHERE C.IDENTITY=#{identity})
+    </select>
+    -->
+    <select id="findLoanPersonalCount" parameterType="String" resultType="int">
+        SELECT
+            COUNT(*)  
+        FROM(
+        	SELECT 
+        		L.ID 
+        	FROM 
+        		LOAN L
+        	WHERE L.STATUS>'10'
+        		AND L.LOAN_CODE IN(
+        			SELECT 
+        				LOAN_CODE 
+        			FROM 
+        				LOAN_PERSONAL_INFO LPI 
+        			WHERE LPI.IDENTITY==#{identity}
+        		)      	
+        )
+    </select>
+</mapper>

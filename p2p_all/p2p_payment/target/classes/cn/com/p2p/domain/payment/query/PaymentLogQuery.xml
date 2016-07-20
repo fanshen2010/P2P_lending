@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.payment.query.PaymentLogQuery">
+    <!--基本字段定义 -->
+    <sql id="base_column">
+        ID,
+        TX_CODE,
+        USER_LOGIN,
+        PROJECT_NO,
+        PROJECT_NAME,
+        LOAN_JSON,
+        INVEST_JOSN,
+        PAYMENT_AMOUNT,
+        TYPE,
+        PAYMENT_USAGE,
+        PAYMENT_TIME,
+        TENANT_ID,
+        STATUS,
+        CREATE_TIME,
+        UPDATE_TIME
+    </sql>
+
+    <!--按流水号进行查询，返回唯一一条记录 -->
+    <select id="findOneBySerialNumber" parameterType="string" resultType="PaymentLog">
+        SELECT
+            <include refid="base_column"/>
+        FROM
+            PAYMENT_LOG
+        WHERE
+            SERIAL_NUMBER = #{serialNumber}
+    </select>
+
+     <!-- 按照自定义查询参数进行查询，返回支付记录列表 -->
+    <select id="findPageListByCustomCriteria" parameterType="PaymentLogCustomCriteria" resultType="PaymentLog">
+         SELECT 
+            <include refid="base_column" />
+        FROM 
+            PAYMENT_LOG
+       WHERE PAYMENT_TIME IS NOT NULL
+          <!-- 添加最大交易处理时间条件 -->
+          <if test="criteria.maxDate!=null">
+              AND PAYMENT_TIME &lt;=#{criteria.maxDate}
+          </if>
+          <!-- 添加最小交易处理时间条件 -->
+          <if test="criteria.minDate!=null">
+              AND PAYMENT_TIME &gt;=#{criteria.minDate}
+          </if>
+          <!-- 添加用户名条件 -->
+          <if test="criteria.userLogin!=null and criteria.userLogin!=''">
+              AND USER_LOGIN=#{criteria.userLogin}
+          </if>
+        ORDER BY PAYMENT_TIME
+    </select>
+
+    <!-- 按条件翻页检索，返回实体集合 -->
+    <select id="findPageByCreateCriteria" parameterType="PaymentLogCreateCriteria" resultType="PaymentLog">
+        SELECT
+        <include refid="base_column"/>
+         FROM PAYMENT_LOG
+        <where>
+            <!-- 添加最大交易处理时间条件 -->
+            <if test="criteria.createMaxTime!=null and criteria.createMaxTime!=''">
+                AND CREATE_TIME &lt;=#{criteria.createMaxTime}
+            </if>
+            <!-- 添加最小交易处理时间条件 -->
+            <if test="criteria.createMinTime!=null and criteria.createMinTime!=''">
+                AND CREATE_TIME &gt;=#{criteria.createMinTime}
+            </if>
+            <!-- 添加最大交易处理时间条件 -->
+            <if test="criteria.paymentMaxTime!=null and criteria.paymentMaxTime!=''">
+                AND PAYMENT_TIME &lt;=#{criteria.paymentMaxTime}
+            </if>
+            <!-- 添加最小结算时间条件 -->
+            <if test="criteria.paymentMinTime!=null and criteria.paymentMinTime!=''">
+                AND PAYMENT_TIME &gt;=#{criteria.paymentMinTime}
+            </if>
+            <!-- 添加投资客户用户名模糊查询 -->
+            <if test="criteria.userLogin!=null and criteria.userLogin!=''">
+                AND USER_LOGIN LIKE CONCAT(CONCAT('%',#{criteria.userLogin}),'%')
+            </if>
+            <!-- 添加项目名称模糊查询 -->
+            <if test="criteria.projectName!=null and criteria.projectName!=''">
+                AND PROJECT_NAME LIKE CONCAT(CONCAT('%',#{criteria.projectName}),'%')
+            </if>
+            <!-- 添加项目类型查询条件 -->
+            <if test="criteria.paymentUsage!=null and criteria.paymentUsage!=''">
+                AND PAYMENT_USAGE = #{criteria.paymentUsage}
+            </if>
+            <!-- 添加支付类型查询条件 -->
+            <if test="criteria.type!=null and criteria.type!=''">
+                AND TYPE = #{criteria.type}
+            </if>
+            <!-- 添加支付类型查询条件 -->
+            <if test="criteria.status!=null and criteria.status!=''">
+                AND STATUS = #{criteria.status}
+            </if>
+            ORDER BY CREATE_TIME DESC
+        </where>
+
+    </select>
+    
+    <!-- 按条件翻页检索，返回实体集合 -->
+    <select id="findTotalAmountByCriteria"  resultType="BigDecimal">
+        SELECT 
+            COUNT(PAYMENT_AMOUNT)
+         FROM PAYMENT_LOG
+        WHERE
+            PAYMENT_TIME IS NOT NULL
+            <!-- 添加交易处理时间_年月条件 -->
+            <if test="paymentYearMonth!=null and paymentYearMonth!=''">
+                AND DATE_FORMAT(PAYMENT_TIME,'%Y%m') =#{paymentYearMonth}
+            </if>
+            <!-- 添加用户名条件 -->
+            <if test="userLogin!=null and userLogin!=''">
+                AND USER_LOGIN =#{userLogin}
+            </if>
+          GROUP BY DATE_FORMAT(PAYMENT_TIME,'%Y%m')
+          ORDER BY PAYMENT_TIME
+        
+    </select>
+
+</mapper>

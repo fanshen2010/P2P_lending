@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.p2p.domain.payment.query.CiccAccountQuery">
+
+    <!--按账户号码进行查询，返回唯一一条记录 对应repository findOne方法 -->
+    <select id="findOneByPaymentAccountNumber" parameterType="string" resultType="CiccAccount">
+        SELECT 
+        ID,
+        USER_NAME,
+        PAYMENT_ACCOUNT_NUMBER,
+        USER_TYPE,
+        BALANCE,
+        CUST_CODE,
+        USER_ID
+
+        FROM 
+            CICC_ACCOUNT
+        WHERE
+            PAYMENT_ACCOUNT_NUMBER = #{paymentAccountNumber}
+    </select>
+    
+    
+    <select id="findOneByCustCode" parameterType="string" resultType="CiccAccount">
+        SELECT 
+        ID,
+        USER_NAME,
+        PAYMENT_ACCOUNT_NUMBER,
+        USER_TYPE,
+        BALANCE,
+        CUST_CODE,
+        USER_ID
+        
+        FROM 
+            CICC_ACCOUNT
+        WHERE
+            CUST_CODE = #{custCode}
+    </select>
+    
+    <select id="findOneByUserId" parameterType="string" resultType="CiccAccount">
+        SELECT 
+        ID,
+        USER_NAME,
+        PAYMENT_ACCOUNT_NUMBER,
+        USER_TYPE,
+        BALANCE,
+        CUST_CODE,
+        USER_ID
+        
+        FROM 
+            CICC_ACCOUNT
+        WHERE
+            USER_ID = #{userId}
+    </select>
+    
+</mapper>
